@@ -1,43 +1,42 @@
 package org.flowershop.service;
 
 import org.flowershop.domain.products.Product;
+import org.flowershop.repository.IProductRepository;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class ProductService {
-    private List<Product> products = new ArrayList<Product>();
+    private IProductRepository repository;
+
+
+    // This method gets the repository by injection dependencies.
+    public ProductService(IProductRepository repository) {
+        this.repository = repository;
+    }
 
 
     // Methods
     public void addProduct(Product product) {
-        products.add(product);
+        repository.addProduct(product);
     }
 
     public void removeProduct(Product product) {
-        products.remove(product);
+        repository.removeProduct(product);
     }
 
     public void getProductByName(String name) {
-        // TODO: getProductByName
+        repository.getProductByName(name);
     }
 
     public void getProductById(long id) {
-        // TODO: getProductById
+        repository.getProductById(id);
     }
 
     public void displayProducts() {
-        for (Product product: products) {
-            product.displayProduct();
-        }
+        repository.displayProducts();
     }
 
     public void displayStock() {
-        int stock = 0;
-        for (Product product: products) {
-            stock += product.getStock();
-        }
-        System.out.println("Total FlowerShop stock: " + stock);
+        repository.displayStock();
     }
 
 }
