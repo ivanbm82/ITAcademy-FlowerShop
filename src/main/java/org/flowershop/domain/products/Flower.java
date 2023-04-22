@@ -1,11 +1,14 @@
 package org.flowershop.domain.products;
 
+
 public class Flower extends Product {
     private String color;
 
 
-    public Flower(String name, double price, String color) {
-        super(name, price);
+    public  Flower() {}
+
+    public Flower(String ref, String name, double price, String color) {
+        super(ref, name, price);
         this.color = color;
     }
 
@@ -18,16 +21,34 @@ public class Flower extends Product {
         this.color = color;
     }
 
-    // TODO: Method to display flower info on screen.
+
+    /**
+     * This method displays the product information by screen.
+     *
+     */
     @Override
     public void displayProduct() {
-        // TODO: Logic to display a flower product.
-        final StringBuilder sb = new StringBuilder("Flower{");
-        sb.append("name=").append(getName());
-        sb.append("price=").append(getPrice());
-        sb.append("color=").append(color);
-        sb.append('}');
+        final StringBuilder sb = new StringBuilder("Flower");
+        sb.append("    id: ").append(getId()).append(", ");
+        sb.append("    ref: ").append(getRef()).append(", ");
+        sb.append("    name: ").append(getName()).append(", ");
+        sb.append("    color: '").append(color).append("\', ");
+        sb.append("    price: ").append(getPrice()).append(", ");
+        sb.append("    stock: ").append(getStock());
         System.out.println(sb);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Flower{");
+        sb.append("id: ").append(getId()).append(", ");
+        sb.append("ref: ").append(getRef()).append(", ");
+        sb.append("name: ").append(getName()).append(", ");
+        sb.append("color: '").append(color).append("\', ");
+        sb.append("price: ").append(getPrice()).append(", ");
+        sb.append("stock: ").append(getStock());
+        sb.append('}');
+        return sb.toString();
     }
 
 }
