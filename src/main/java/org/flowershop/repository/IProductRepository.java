@@ -2,11 +2,17 @@ package org.flowershop.repository;
 
 import org.flowershop.domain.products.Product;
 
+import java.util.List;
+
+
 public interface IProductRepository {
     void addProduct(Product product);
-    void removeProduct(Product product);
-    Product getProductByName(String name);
     Product getProductById(long id);
-    void displayProducts();
-    void displayStock();
+    Product getProductByRef(String ref);
+    List<Product> getProducts();
+    void updateProductById(long id, Product product);
+    void removeProductById(long id);
+    void removeProductByRef(String ref);
+    void saveProducts();
+    void loadProducts();
 }
