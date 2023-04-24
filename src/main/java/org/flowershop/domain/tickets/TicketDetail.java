@@ -4,12 +4,15 @@ public class TicketDetail {
 
     private Long id;
     private Long idProduct;
+
+    private String ref;
     private Integer quantity;
     private Double price;
     private Double amount;
 
-    public TicketDetail(Long idProduct, Integer quantity, Double price, Double amount) {
+    public TicketDetail(Long idProduct, String ref, Integer quantity, Double price, Double amount) {
         this.idProduct = idProduct;
+        this.ref = ref;
         this.quantity = quantity;
         this.price = price;
         this.amount = amount;
@@ -39,6 +42,10 @@ public class TicketDetail {
         return amount;
     }
 
+    public String getRef() {
+        return ref;
+    }
+
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
@@ -50,10 +57,11 @@ public class TicketDetail {
     @Override
     public String toString() {
         return "TicketDetail{" +
-                "idProduct=" + idProduct +
-                ", quantity=" + quantity +
-                ", price=" + price +
-                ", amount=" + amount +
+                //"idProduct=" + idProduct +
+                "ref= " + ref +
+                ", quantity= " + quantity +
+                ", price= " + price +
+                ", amount= " + amount +
                 '}';
     }
 }
