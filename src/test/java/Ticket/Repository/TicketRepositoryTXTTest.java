@@ -1,13 +1,16 @@
-package Ticket.Repository;
+package Repository;
 
 import org.flowershop.domain.tickets.Ticket;
 import org.flowershop.domain.tickets.TicketDetail;
 import org.flowershop.repository.TicketRepositoryTXT;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
+
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -15,25 +18,58 @@ public class TicketRepositoryTXTTest {
 
     TicketRepositoryTXT ticketRepositoryTXT;
 
-    public TicketRepositoryTXTTest(TicketRepositoryTXT ticketRepositoryTXT) {
-        this.ticketRepositoryTXT = ticketRepositoryTXT;
+
+    @BeforeEach
+    void SetUp() {
+
+        String fileTicket = "C:\\Users\\Susana\\Documents\\GitHub\\ProjectsITACADEMY\\S3\\03\\ITAcademy-FlowerShop\\ticket.txt";
+        ticketRepositoryTXT = new TicketRepositoryTXT(fileTicket);
     }
 
     @DisplayName("Adding new Ticket")
     @Test
     public void addTicket() throws IOException {
         // arrange
-        Ticket ticket1 = new Ticket(new Date(), 1L, 345.0, true);
+        Long id = ticketRepositoryTXT.getLastTicketId();
+        Ticket ticket1 = new Ticket(id, new Date(), 1L, 345.0, true);
         TicketDetail ticketDetail1 = new TicketDetail(1L, 3, 100.0, 300.0);
         TicketDetail ticketDetail2 = new TicketDetail(2L, 1, 45.0, 45.0);
         ticket1.addTicketDetail(ticketDetail1);
         ticket1.addTicketDetail(ticketDetail2);
 
-        ticketRepositoryTXT.addTicket(ticket1);
+        Ticket nuevo = ticketRepositoryTXT.addTicket(ticket1);
 
-        assertEquals(ticket1, ticketRepositoryTXT.getTicketById(ticket1.getId()));
+        assertEquals(ticket1,nuevo);
+
+
     }
 
+    @DisplayName("Adding new Ticket")
+    @Test
+    public void getAllTickets() {
+        // arrange
+        List<Ticket> tickets = ticketRepositoryTXT.getAllTickets();
+
+
+        //assertEquals(ticket1,nuevo);
+
+
+    }
+
+    @DisplayName("Remove Ticket")
+    @Test
+    public void removeTicketById() throws IOException {
+        // arrange
+        Ticket nuevo = ticketRepositoryTXT.removeTicketById(3L);
+
+
+        //assertEquals(ticket1,nuevo);
+
+
+    }
+
+
 }
+
 
 

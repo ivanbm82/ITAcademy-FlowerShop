@@ -1,0 +1,1 @@
+{"id":2,"date":1681990093140,"client":1,"amount":345.0,"finished":true,"ticketDetailList":[{"id":null,"idProduct":1,"quantity":3,"price":100.0,"amount":300.0},{"id":null,"idProduct":2,"quantity":1,"price":45.0,"amount":45.0}]}
