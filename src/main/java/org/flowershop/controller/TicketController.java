@@ -29,13 +29,15 @@ public class TicketController {
     public void ticketDataRequest() {
 
         Properties properties = new Properties();
-        String fileName = "";
+        String fileTicket = "";
+        String fileProduct = "";
         try {
             String directoryProgram = System.getProperty("user.dir");
             String configFile = directoryProgram + "\\src\\main\\resources\\config.properties";
             properties.load(new FileInputStream(new File(configFile)));
 
-            fileName = directoryProgram + "\\" + (String) properties.get("fileticket");
+            fileTicket = directoryProgram + "\\" + (String) properties.get("fileTicket");
+            fileProduct = directoryProgram + "\\" + (String) properties.get("fileProduct");
 
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
@@ -45,8 +47,8 @@ public class TicketController {
             e.printStackTrace();
         }
 
-        TicketService ticketService = new TicketService(new TicketRepositoryTXT(fileName));
-        ProductService productService = new ProductService(new ProductRepositoryTXT());
+        TicketService ticketService = new TicketService(new TicketRepositoryTXT(fileTicket));
+        ProductService productService = new ProductService(new ProductRepositoryTXT(fileProduct));
 
         List<Product> products = loadProductos();
         products.forEach(productService::addProduct);
