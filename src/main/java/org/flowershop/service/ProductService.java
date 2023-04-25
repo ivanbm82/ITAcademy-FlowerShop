@@ -3,6 +3,8 @@ package org.flowershop.service;
 import org.flowershop.domain.products.Product;
 import org.flowershop.repository.IProductRepository;
 
+import java.util.List;
+
 
 public class ProductService {
     private IProductRepository repository;
@@ -19,24 +21,28 @@ public class ProductService {
         repository.addProduct(product);
     }
 
-    public void removeProduct(Product product) {
-        repository.removeProduct(product);
+    public List<Product> getProducts() {
+        return repository.getProducts();
     }
 
-    public void getProductByName(String name) {
-        repository.getProductByName(name);
+    public Product getProductById(long id) {
+        return repository.getProductById(id);
     }
 
-    public void getProductById(long id) {
-        repository.getProductById(id);
+    public Product getProductByRef(String ref) {
+         return repository.getProductByRef(ref);
     }
 
-    public void displayProducts() {
-        repository.displayProducts();
+    void updateProductById(long id, Product product) {
+        repository.updateProductById(id, product);
     }
 
-    public void displayStock() {
-        repository.displayStock();
+    public void removeProductById(long id) {
+        repository.removeProductById(id);
+    }
+
+    public void removeProductByRef(String ref) {
+        repository.getProductByRef(ref);
     }
 
 }
