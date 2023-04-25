@@ -1,0 +1,5 @@
+{"id":1,"date":1682359020074,"client":1,"amount":86.60000000000001,"finished":true,"ticketDetailList":[{"id":null,"idProduct":11,"ref":"F005","quantity":3,"price":23.6,"amount":70.80000000000001},{"id":null,"idProduct":17,"ref":"D003","quantity":4,"price":3.95,"amount":15.8}]}
+{"id":2,"date":1682359244222,"client":1,"amount":156.65,"finished":true,"ticketDetailList":[{"id":null,"idProduct":10,"ref":"F004","quantity":4,"price":23.6,"amount":94.4},{"id":null,"idProduct":17,"ref":"D003","quantity":3,"price":3.95,"amount":11.850000000000001},{"id":null,"idProduct":6,"ref":"T006","quantity":3,"price":16.8,"amount":50.400000000000006}]}
+{"id":3,"date":1682362780062,"client":1,"amount":35.0,"finished":true,"ticketDetailList":[{"id":null,"idProduct":20,"ref":"D006","quantity":5,"price":7.0,"amount":35.0}]}
+{"id":4,"date":1682363534868,"client":1,"amount":236.0,"finished":true,"ticketDetailList":[{"id":null,"idProduct":12,"ref":"F006","quantity":10,"price":23.6,"amount":236.0}]}
+{"id":5,"date":1682407591436,"client":1,"amount":236.0,"finished":true,"ticketDetailList":[{"id":null,"idProduct":11,"ref":"F005","quantity":10,"price":23.6,"amount":236.0}]}
