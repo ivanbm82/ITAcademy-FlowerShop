@@ -195,21 +195,6 @@ public class TicketRepositoryTXT implements iTicketRepositoryText {
         File file = new File(fileName);
         FileWriter fw = new FileWriter(file, false);
 
-        //String oldName= createAuxiliarNAme(fileName);
-        //file.renameTo(new File(oldName));
-
-
-/*
-        newTicketsList.stream().forEach(t -> {
-            try {
-                writeLineInFile(fw, t);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-        });
-
- */
-
         newTicketsList.forEach(t -> {
             try {
                 writeLineInFile(fw, t);
@@ -220,12 +205,6 @@ public class TicketRepositoryTXT implements iTicketRepositoryText {
 
         return ticket;
     }
-    private String createAuxiliarNAme(String fileName) {
 
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-        String now = dtf.format(LocalDateTime.now());
-        return fileName + now + ".txt";
-
-    }
 }
 
