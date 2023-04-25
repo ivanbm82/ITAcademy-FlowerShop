@@ -21,6 +21,10 @@ public class TicketService {
         return ticket;
     }
 
+    /**
+     *
+     * @return
+     */
     public List<Ticket> getAllTickets() {
         List<Ticket> tickets = ticketRepositoryTXT.getAllTickets();
         return tickets;
