@@ -1,12 +1,20 @@
 package org.flowershop.controller;
 
+import org.flowershop.domain.products.Decoration;
+import org.flowershop.domain.products.Flower;
 import org.flowershop.domain.products.Product;
+import org.flowershop.domain.products.Tree;
 import org.flowershop.domain.tickets.Ticket;
 import org.flowershop.domain.tickets.TicketDetail;
+import org.flowershop.repository.ProductRepositoryTXT;
+import org.flowershop.repository.TicketRepositoryTXT;
 import org.flowershop.service.ProductService;
 import org.flowershop.service.TicketService;
 import org.flowershop.utils.Menu;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -15,14 +23,13 @@ import static org.flowershop.utils.Scan.Scan.askForInt;
 import static org.flowershop.utils.Scan.Scan.askForString;
 
 
-public class TicketController {
+public class ProductController {
 
 
-    public void ticketDataRequest(TicketService ticketService, ProductService productService) {
+    public void productDataRequest(ProductService productService) {
 
-        List<Product> products = loadProductos(productService);
-
-        List<TicketDetail> ticketDetails = new ArrayList<>();
+        List<Product> products = loadProductos();
+        products.forEach(productService::addProduct);
 
         Boolean exit = false;
 
@@ -33,29 +40,24 @@ public class TicketController {
                     System.out.println(option);
                     switch (option) {
                         case 1:
-                            //TODO Adding new product in ticket
-                            addProductInTicketDetail(products, ticketDetails);
+                            //TODO Adding new product
+                            //addProductInTicketDetail(products, ticketDetails);
                             break;
                         case 2:
 
-                            //TODO Modify Quantity from a ticketDetail
-                            modifyQuantityInTicketDetail(ticketDetails);
+                            //TODO Update Product by ID
+                            //modifyQuantityInTicketDetail(ticketDetails);
                             break;
                         case 3:
-                            //TODO Deleting productDetail from a ticket
-                            removeProductInTicketDetail(ticketDetails);
+                            //TODO Deleting product
+                            //removeProductInTicketDetail(ticketDetails);
                             break;
                         case 4:
-                            //TODO Print all ticketDetail
-                            showProductsInTicket(ticketDetails);
-
+                            //TODO Print all products
+                            productService.getProducts();
                             break;
                         case 5:
-                            //TODO Save Ticket
-                            saveTicket(ticketService, ticketDetails);
-                            break;
-                        case 6:
-                            ticketDetails.clear();
+                            //TODO Exit from Product Menu
                             exit = true;
                             break;
                         default:
@@ -93,28 +95,27 @@ public class TicketController {
 
     private List<TicketDetail> modifyQuantityInTicketDetail(List<TicketDetail> ticketDetails) {
 
-        if (ticketDetails.size() > 0) {
-            System.out.println("Update Product in TicketDetail ...\n");
-            showObjectList(ticketDetails);
+        System.out.println("Update Product in TicketDetail ...");
+        showObjectList(ticketDetails);
 
-            String reference = askForString("Input product reference to update");
+        String reference = askForString("Input product reference to update");
 
-            Optional<TicketDetail> findTicketDetail = ticketDetails.stream().filter(p -> p.getRef().equalsIgnoreCase(reference)).findFirst();
+        Optional<TicketDetail> findTicketDetail = ticketDetails.stream().filter(p -> p.getRef().equalsIgnoreCase(reference)).findFirst();
 
-            if (findTicketDetail.isPresent()) {
-                Integer quantity = askForInt("Input new quantity");
+        if (findTicketDetail.isPresent()) {
+            Integer quantity = askForInt("Input new quantity");
 
-                findTicketDetail.get().setQuantity(quantity);
-                findTicketDetail.get().setAmount(quantity * findTicketDetail.get().getPrice());
-                System.out.println(findTicketDetail);
-            } else System.out.println("This product isn't in the ticket");
-        } else System.out.println("There aren't products in ticket");
+            findTicketDetail.get().setQuantity(quantity);
+            findTicketDetail.get().setAmount(quantity * findTicketDetail.get().getPrice());
+            System.out.println(findTicketDetail);
+        } else System.out.println("This product isn't in the ticket");
+        ;
         return ticketDetails;
 
     }
 
     private List<TicketDetail> removeProductInTicketDetail(List<TicketDetail> ticketDetails) {
-        System.out.println("Remove Product in TicketDetail ...\n");
+        System.out.println("Remove Product in TicketDetail ...");
         showObjectList(ticketDetails);
 
         if (ticketDetails.size() > 0) {
@@ -140,7 +141,7 @@ public class TicketController {
     }
 
     private List<TicketDetail> addProductInTicketDetail(List<Product> products, List<TicketDetail> ticketDetails) {
-        System.out.println("Add Product in Order ...\n");
+        System.out.println("Add Product in Order ...");
         showObjectList(products);
         String reference = askForString("Input product reference");
 
@@ -172,8 +173,35 @@ public class TicketController {
 
     }
 
-    private List<Product> loadProductos(ProductService productService) {
-        return productService.getProducts();
+    private List<Product> loadProductos() {
+        Product product1 = new Tree("T001", "Abeto", 23.60, 1.60f);
+        Product product2 = new Tree("T002", "Magnolia", 16.80, 0.30f);
+        Product product3 = new Tree("T003", "Pino", 23.60, 1.60f);
+        Product product4 = new Tree("T004", "Limonero", 16.80, 0.30f);
+        Product product5 = new Tree("T005", "Almendro", 23.60, 1.60f);
+        Product product6 = new Tree("T006", "Manzano", 16.80, 0.30f);
+
+        Product product7 = new Flower("F001", "Rosa", 23.60, "blanco");
+        Product product8 = new Flower("F002", "Rosa", 23.60, "rojo");
+        Product product9 = new Flower("F003", "Rosa", 23.60, "rosa");
+        Product product10 = new Flower("F004", "Margarita", 23.60, "blanca/amarilla");
+        Product product11 = new Flower("F005", "Lirio", 23.60, "blanca");
+        Product product12 = new Flower("F006", "Lirio", 23.60, "amarillo");
+        Product product13 = new Flower("F007", "Amapola", 23.60, "roja");
+        Product product14 = new Flower("F008", "Amapola", 23.60, "amarilla");
+
+        Product product15 = new Decoration("D001", "Enredadera de pared", 20.95, "Madera");
+        Product product16 = new Decoration("D002", "Centro gris", 2.95, "Madera");
+        Product product17 = new Decoration("D003", "Adorno flor", 03.95, "Madera");
+        Product product18 = new Decoration("D004", "Palo", 2.0, "Plastico");
+        Product product19 = new Decoration("D005", "Vaso flor", 4.0, "Madera");
+        Product product20 = new Decoration("D006", "Macetero", 7.0, "Plastico");
+
+        List<Product> products = Arrays.asList(product1, product2, product3, product4, product5, product6, product7, product8, product9, product10,
+                product11, product12, product13, product14, product15, product16, product17, product18, product19, product20);
+
+        return products;
     }
+
 
 }
