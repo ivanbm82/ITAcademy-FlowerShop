@@ -1,4 +1,4 @@
-package org.flowershop.Controller;
+package org.flowershop.controller;
 
 import org.flowershop.domain.products.Decoration;
 import org.flowershop.domain.products.Flower;
@@ -6,10 +6,15 @@ import org.flowershop.domain.products.Product;
 import org.flowershop.domain.products.Tree;
 import org.flowershop.domain.tickets.Ticket;
 import org.flowershop.domain.tickets.TicketDetail;
+import org.flowershop.repository.ProductRepositoryTXT;
 import org.flowershop.repository.TicketRepositoryTXT;
+import org.flowershop.service.ProductService;
 import org.flowershop.service.TicketService;
 import org.flowershop.utils.MenuTickets;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -23,10 +28,30 @@ public class TicketController {
 
     public void ticketDataRequest() {
 
-        String fileName = "C:\\Users\\Susana\\Documents\\GitHub\\ProjectsITACADEMY\\S3\\03\\ITAcademy-FlowerShop\\ticket.txt";
-        TicketService ticketService = new TicketService(new TicketRepositoryTXT(fileName));
+        Properties properties = new Properties();
+        String fileTicket = "";
+        String fileProduct = "";
+        try {
+            String directoryProgram = System.getProperty("user.dir");
+            String configFile = directoryProgram + "\\src\\main\\resources\\config.properties";
+            properties.load(new FileInputStream(new File(configFile)));
+
+            fileTicket = directoryProgram + "\\" + (String) properties.get("fileTicket");
+            fileProduct = directoryProgram + "\\" + (String) properties.get("fileProduct");
+
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        TicketService ticketService = new TicketService(new TicketRepositoryTXT(fileTicket));
+        ProductService productService = new ProductService(new ProductRepositoryTXT(fileProduct));
 
         List<Product> products = loadProductos();
+        products.forEach(productService::addProduct);
 
         List<TicketDetail> ticketDetails = new ArrayList<>();
 
@@ -40,25 +65,25 @@ public class TicketController {
                     System.out.println(option);
                     switch (option) {
                         case 1:
-                            //TO DO Adding new product in ticket
+                            //TODO Adding new product in ticket
                             addProductInTicketDetail(products, ticketDetails);
                             break;
                         case 2:
 
-                            //TO DO Modify Quantity from ticketDetail
+                            //TODO Modify Quantity from a ticketDetail
                             modifyQuantityInTicketDetail(ticketDetails);
                             break;
                         case 3:
-                            //TO DO Deleting Product from ticket
+                            //TODO Deleting productDetail from a ticket
                             removeProductInTicketDetail(ticketDetails);
                             break;
                         case 4:
-                            //TO DO Print ticket detail
-                            reviewProductsInTicket(ticketDetails);
+                            //TODO Print all ticketDetail
+                            showProductsInTicket(ticketDetails);
 
                             break;
                         case 5:
-                            //TO DO Save Ticket
+                            //TODO Save Ticket
                             saveTicket(ticketService, ticketDetails);
                             break;
                         case 6:
@@ -79,9 +104,8 @@ public class TicketController {
 
     }
 
-    private void reviewProductsInTicket(List<TicketDetail> ticketDetails) {
+    private void showProductsInTicket(List<TicketDetail> ticketDetails) {
         showObjectList(ticketDetails);
-        //ticketDetails.stream().forEach(System.out::println);
         DecimalFormat df = new DecimalFormat("#.##");
         Double total = ticketDetails.stream().mapToDouble(TicketDetail::getAmount).sum();
         System.out.println("Total ticket: " + df.format(total));
@@ -90,10 +114,11 @@ public class TicketController {
     private void saveTicket(TicketService ticketService, List<TicketDetail> ticketDetails) throws IOException {
         Double total = ticketDetails.stream().mapToDouble(TicketDetail::getAmount).sum();
         Ticket ticket = new Ticket(ticketService.getLastTicketId(), new Date(), 1L, total, true);
-        for (TicketDetail ticketDetail : ticketDetails) {
-            ticket.addTicketDetail(ticketDetail);
-        }
+        ticketDetails.stream().forEach(ticket::addTicketDetail);
+
         ticketService.addTicket(ticket);
+        System.out.println(ticket);
+
         ticketDetails.clear();
     }
 
@@ -101,7 +126,6 @@ public class TicketController {
 
         System.out.println("Update Product in TicketDetail ...");
         showObjectList(ticketDetails);
-        //ticketDetails.stream().forEach(System.out::println);
 
         String reference = askForString("Input product reference to update");
 
@@ -112,8 +136,9 @@ public class TicketController {
 
             findTicketDetail.get().setQuantity(quantity);
             findTicketDetail.get().setAmount(quantity * findTicketDetail.get().getPrice());
-        }
-        else System.out.println("This product isn't in the ticket");;
+            System.out.println(findTicketDetail);
+        } else System.out.println("This product isn't in the ticket");
+        ;
         return ticketDetails;
 
     }
@@ -121,21 +146,26 @@ public class TicketController {
     private List<TicketDetail> removeProductInTicketDetail(List<TicketDetail> ticketDetails) {
         System.out.println("Remove Product in TicketDetail ...");
         showObjectList(ticketDetails);
-        //ticketDetails.stream().forEach(System.out::println);
 
         if (ticketDetails.size() > 0) {
             String reference = askForString("Input product reference to remove");
 
-            Iterator<TicketDetail> it = ticketDetails.iterator();
-            while (it.hasNext()) {
-                String ref = it.next().getRef();
-                if (ref.equalsIgnoreCase(reference)) {
-                    it.remove();
-                    System.out.println("Product " + reference + " remove in ticket");
+            //TODO Verify if product exits in ticket detail
+            Optional<TicketDetail> findTicketDetail = ticketDetails.stream().filter(p -> p.getRef().equalsIgnoreCase(reference)).findFirst();
+
+            if (findTicketDetail.isPresent()) {
+
+                Iterator<TicketDetail> it = ticketDetails.iterator();
+                while (it.hasNext()) {
+                    String ref = it.next().getRef();
+                    if (ref.equalsIgnoreCase(reference)) {
+                        it.remove();
+                        System.out.println("Product " + reference + " remove in ticket");
+                    }
                 }
-            }
+            } else System.out.println("There isn't reference in ticket");
         } else System.out.println("There aren't products in ticket");
-            return ticketDetails;
+        return ticketDetails;
 
     }
 
@@ -143,23 +173,24 @@ public class TicketController {
         System.out.println("Add Product in Order ...");
         showObjectList(products);
         String reference = askForString("Input product reference");
-        Integer quantity = askForInt("Input quantity");
 
-        //Verify if product exits
+
+        //TODO Verify if product exits
         Optional<Product> findProduct = products.stream().filter(p -> p.getRef().equalsIgnoreCase(reference)).findFirst();
 
         if (findProduct.isPresent()) {
-            //Verify if product exits in ticket detail
+            //TODO Verify if product exits in ticket detail
             Optional<TicketDetail> findTicketDetail = ticketDetails.stream().filter(p -> p.getRef().equalsIgnoreCase(reference)).findFirst();
 
             if (findTicketDetail.isPresent()) {
                 System.out.println("Product already exists in the ticket");
             } else {
+                Integer quantity = askForInt("Input quantity");
                 TicketDetail newTicketDetail = new TicketDetail(findProduct.get().getId(), findProduct.get().getRef(),
                         quantity, findProduct.get().getPrice(), quantity * findProduct.get().getPrice());
                 ticketDetails.add(newTicketDetail);
 
-                newTicketDetail.toString();
+                System.out.println(newTicketDetail);
             }
         }
         return ticketDetails;

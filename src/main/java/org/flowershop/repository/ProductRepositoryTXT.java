@@ -22,14 +22,15 @@ public class ProductRepositoryTXT implements IProductRepository {
     private ObjectMapper objectMapper;
     private List<Product> products;
 
-
-    public ProductRepositoryTXT() {
+    public ProductRepositoryTXT(String fileProduct) {
         // Put the file path to save
-        filePath = "..\\flowerShopData\\products.txt";
+        //filePath = "..\\flowerShopData\\products.txt";
+        filePath = fileProduct;
 
         objectMapper = new ObjectMapper();
         products = new ArrayList<Product>();
         file = new File(filePath);
+
 
         loadProducts();
     }

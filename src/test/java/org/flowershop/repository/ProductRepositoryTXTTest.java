@@ -19,7 +19,8 @@ public class ProductRepositoryTXTTest {
 
     @BeforeEach
     void setUp() {
-        productRepository = new ProductRepositoryTXT();
+        String fileProduct = "";
+        productRepository = new ProductRepositoryTXT(fileProduct);
         productRepository.loadProducts();
     }
 

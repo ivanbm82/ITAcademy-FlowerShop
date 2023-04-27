@@ -56,12 +56,9 @@ public class TicketDetail {
 
     @Override
     public String toString() {
-        return "TicketDetail{" +
-                //"idProduct=" + idProduct +
-                "ref= " + ref +
+        return  "Ref= " + ref +
                 ", quantity= " + quantity +
                 ", price= " + price +
-                ", amount= " + amount +
-                '}';
+                ", amount= " + amount;
     }
 }

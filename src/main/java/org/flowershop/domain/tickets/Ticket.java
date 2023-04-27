@@ -77,13 +77,13 @@ public class Ticket implements Serializable {
 
     @Override
     public String toString() {
-        return "Ticket{" +
-                "id=" + id +
+        return "Ticket:" +
+                "ID= " + id +
                 ", date=" + date +
-                ", client=" + client +
-                ", amount=" + amount +
-                ", finished=" + finished +
-                ", ticketDetailList=" + ticketDetailList +
+       //         ", client=" + client +
+                ", amount=" + amount + "\n" +
+        //        ", finished=" + finished +
+                ", products=" + ticketDetailList +
                 '}';
     }
 
