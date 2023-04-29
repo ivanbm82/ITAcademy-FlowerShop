@@ -1,5 +1,6 @@
-package org.flowershop;
+package org.flowershop.service;
 
+import org.flowershop.Ticket;
 import org.flowershop.domain.products.Product;
 
 import java.time.LocalDate;
@@ -8,7 +9,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
-public class QueryFlowerShop {
+public class QueryService {
     public int checkStock(List<Product> products) {
         return products.stream()
                 .mapToInt(Product::getStock)
