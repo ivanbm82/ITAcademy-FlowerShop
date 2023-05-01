@@ -1,8 +1,6 @@
 package org.flowershop.service;
 
 import org.flowershop.domain.flowerShop.FlowerShop;
-import org.flowershop.domain.products.Flower;
-import org.flowershop.domain.products.Product;
 import org.flowershop.repository.IFlowerShopRepository;
 
 import java.util.List;
@@ -30,20 +28,12 @@ public class FlowerShopService {
         return repository.getFlowerShopById(id);
     }
 
-    public FlowerShop getFlowerShopByRef(String ref) {
-        return repository.getFlowerShopByRef(ref);
-    }
-
-    void updateFlowerShop(FlowerShop flowerShop, String ref, String name) {
-        repository.updateFlowerShop(flowerShop, ref, name);
+    void updateFlowerShop(FlowerShop flowerShop, String name) {
+        repository.updateFlowerShop(flowerShop, name);
     }
 
     public void removeFlowerShopById(long id) {
         repository.removeFlowerShopById(id);
-    }
-
-    public void removeFlowerShopByRef(String ref) {
-        repository.getFlowerShopByRef(ref);
     }
 
 }
