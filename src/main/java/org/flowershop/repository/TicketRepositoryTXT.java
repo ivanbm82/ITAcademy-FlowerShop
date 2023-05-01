@@ -105,7 +105,6 @@ public class TicketRepositoryTXT implements iTicketRepositoryText {
         FileReader fr = null;
         BufferedReader br = null;
         String file1 = this.getFileTicket();
-        ;
 
         try {
             file = new File(file1);

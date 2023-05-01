@@ -3,10 +3,17 @@ package org.flowershop.controller;
 import org.flowershop.domain.products.Product;
 import org.flowershop.domain.tickets.Ticket;
 import org.flowershop.domain.tickets.TicketDetail;
+import org.flowershop.repository.ProductRepositoryTXT;
+import org.flowershop.repository.TicketRepositoryTXT;
 import org.flowershop.service.ProductService;
 import org.flowershop.service.TicketService;
-import org.flowershop.utils.Menu;
 
+import org.flowershop.utils.MenuTickets;
+import org.flowershop.utils.Scan.Scan;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -16,28 +23,46 @@ import static org.flowershop.utils.Scan.Scan.askForString;
 
 
 public class TicketController {
+    Properties properties;
+    ProductService productService;
+    TicketService ticketService;
+    String fileTicket;
 
 
-    public void ticketDataRequest(TicketService ticketService, ProductService productService) {
+    public TicketController() {
+        properties = new Properties();
+        productService = new ProductService( new ProductRepositoryTXT());
+        String directoryProgram = System.getProperty("user.dir");
+        String configFile = directoryProgram + "\\src\\main\\resources\\config.properties";
+        try {
+            properties.load(new FileInputStream(new File(configFile)));
+            fileTicket = directoryProgram + "\\" + (String) properties.get("fileTicket");
+            ticketService = new TicketService(new TicketRepositoryTXT(fileTicket));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-        List<Product> products = loadProductos(productService);
 
+    public void ticketDataRequest() {
+        List<Product> products = productService.getProducts();
         List<TicketDetail> ticketDetails = new ArrayList<>();
-
         Boolean exit = false;
 
         try {
             do {
                 try {
-                    int option = Menu.showTicketOptions();
+                    int option = MenuTickets.showOption("Tickets");
                     System.out.println(option);
                     switch (option) {
                         case 1:
+                            System.out.println("option product");
                             //TODO Adding new product in ticket
                             addProductInTicketDetail(products, ticketDetails);
                             break;
                         case 2:
-
                             //TODO Modify Quantity from a ticketDetail
                             modifyQuantityInTicketDetail(ticketDetails);
                             break;
@@ -48,7 +73,7 @@ public class TicketController {
                         case 4:
                             //TODO Print all ticketDetail
                             showProductsInTicket(ticketDetails);
-
+                            Scan.askForString("Press enter to continue...");
                             break;
                         case 5:
                             //TODO Save Ticket
@@ -65,12 +90,16 @@ public class TicketController {
                 } catch (Exception e) {
                     System.out.println("Incorrect option");
                 }
+
             } while (!exit);
         } catch (Exception e) {
             System.out.println("Bye!!!");
         }
 
+    }
 
+    public List<Ticket> getAllTickets() {
+        return ticketService.getAllTickets();
     }
 
     private void showProductsInTicket(List<TicketDetail> ticketDetails) {
@@ -167,12 +196,12 @@ public class TicketController {
 
     }
 
-    private void showObjectList(List<?> list) {
+    public void showObjectList(List<?> list) {
         list.stream().forEach(System.out::println);
 
     }
 
-    private List<Product> loadProductos(ProductService productService) {
+    private List<Product> loadProducts(ProductService productService) {
         return productService.getProducts();
     }
 

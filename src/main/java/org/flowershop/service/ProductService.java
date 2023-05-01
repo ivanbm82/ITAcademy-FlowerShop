@@ -1,13 +1,14 @@
 package org.flowershop.service;
 
 import org.flowershop.domain.products.Product;
+import org.flowershop.exceptions.NegativeValueException;
 import org.flowershop.repository.IProductRepository;
 
 import java.util.List;
 
 
 public class ProductService {
-    private IProductRepository repository;
+    private final IProductRepository repository;
 
 
     // This method gets the repository by injection dependencies.
@@ -33,7 +34,17 @@ public class ProductService {
          return repository.getProductByRef(ref);
     }
 
-    void updateProductById(long id, Product product) {
+    public void updateStockbyRef(String ref, int quantity) {
+        Product product = getProductByRef(ref);
+        try {
+            product.updateStock(quantity);
+        } catch (NegativeValueException e) {
+            throw new RuntimeException(e);
+        }
+        repository.updateProduct(product);
+    }
+
+    public void updateProductById(long id, Product product) {
         repository.updateProductById(id, product);
     }
 
@@ -42,7 +53,7 @@ public class ProductService {
     }
 
     public void removeProductByRef(String ref) {
-        repository.getProductByRef(ref);
+        repository.removeProductByRef(ref);
     }
 
 }

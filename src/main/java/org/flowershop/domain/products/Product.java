@@ -33,7 +33,7 @@ public abstract class Product {
      * @param price  The price of the product.
      */
     public Product(String ref, String name, double price) {
-        this.id = getNewId();
+        this.id = ++lastId;
         this.ref = ref;
         this.name = name;
         this.price = Math.abs(price);
@@ -41,8 +41,8 @@ public abstract class Product {
 
 
     // Methods
-    private static long getNewId() {
-        return ++lastId;
+    private static void getNewId(long id) {
+        lastId = id;
     }
 
     /**
@@ -80,7 +80,7 @@ public abstract class Product {
     /**
      * This method updates the stock quantity of a product by adding or subtracting a quantity.
      *
-     * @param quantity
+     * @param quantity                 Quantity to add or extract from the product.
      * @throws NegativeValueException  If the stock tries to update to a negative value.
      */
     public void updateStock(int quantity) throws NegativeValueException {
