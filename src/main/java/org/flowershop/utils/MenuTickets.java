@@ -7,7 +7,10 @@ public class MenuTickets {
      *
      * @return integer with option menu
      */
-    public static int showOption() {
+    public static int showOption(String flowerShop) {
+        System.out.println("----------------------------");
+        System.out.println("   " + flowerShop);
+        System.out.println("----------------------------");
         String cad = "Select Option in Order...";
         cad += "\n1.Add Product";
         cad += "\n2.Modify Quantity";

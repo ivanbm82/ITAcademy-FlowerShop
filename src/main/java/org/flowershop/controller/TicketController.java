@@ -1,9 +1,6 @@
 package org.flowershop.controller;
 
-import org.flowershop.domain.products.Decoration;
-import org.flowershop.domain.products.Flower;
 import org.flowershop.domain.products.Product;
-import org.flowershop.domain.products.Tree;
 import org.flowershop.domain.tickets.Ticket;
 import org.flowershop.domain.tickets.TicketDetail;
 import org.flowershop.repository.ProductRepositoryTXT;
@@ -11,6 +8,7 @@ import org.flowershop.repository.TicketRepositoryTXT;
 import org.flowershop.service.ProductService;
 import org.flowershop.service.TicketService;
 import org.flowershop.utils.MenuTickets;
+import org.flowershop.utils.Scan.Scan;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,35 +22,31 @@ import static org.flowershop.utils.Scan.Scan.askForString;
 
 
 public class TicketController {
+    Properties properties;
+    ProductService productService;
+    TicketService ticketService;
+    String fileTicket;
+
+
+    public TicketController() {
+        properties = new Properties();
+        productService = new ProductService( new ProductRepositoryTXT());
+        String directoryProgram = System.getProperty("user.dir");
+        String configFile = directoryProgram + "\\src\\main\\resources\\config.properties";
+        try {
+            properties.load(new FileInputStream(new File(configFile)));
+            fileTicket = directoryProgram + "\\" + (String) properties.get("fileTicket");
+            ticketService = new TicketService(new TicketRepositoryTXT(fileTicket));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     public void ticketDataRequest() {
-
-        Properties properties = new Properties();
-        String fileTicket = "";
-        String fileProduct = "";
-        try {
-            String directoryProgram = System.getProperty("user.dir");
-            String configFile = directoryProgram + "\\src\\main\\resources\\config.properties";
-            properties.load(new FileInputStream(new File(configFile)));
-
-            fileTicket = directoryProgram + "\\" + (String) properties.get("fileTicket");
-            fileProduct = directoryProgram + "\\" + (String) properties.get("fileProduct");
-
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        TicketService ticketService = new TicketService(new TicketRepositoryTXT(fileTicket));
-        ProductService productService = new ProductService(new ProductRepositoryTXT(fileProduct));
-
-        List<Product> products = loadProductos();
-        products.forEach(productService::addProduct);
-
+        List<Product> products = productService.getProducts();
         List<TicketDetail> ticketDetails = new ArrayList<>();
 
         System.out.println("Enter products order");
@@ -61,15 +55,15 @@ public class TicketController {
         try {
             do {
                 try {
-                    int option = MenuTickets.showOption();
+                    int option = MenuTickets.showOption("Tickets");
                     System.out.println(option);
                     switch (option) {
                         case 1:
+                            System.out.println("option product");
                             //TODO Adding new product in ticket
                             addProductInTicketDetail(products, ticketDetails);
                             break;
                         case 2:
-
                             //TODO Modify Quantity from a ticketDetail
                             modifyQuantityInTicketDetail(ticketDetails);
                             break;
@@ -80,7 +74,7 @@ public class TicketController {
                         case 4:
                             //TODO Print all ticketDetail
                             showProductsInTicket(ticketDetails);
-
+                            Scan.askForString("Press enter to continue...");
                             break;
                         case 5:
                             //TODO Save Ticket
@@ -96,12 +90,17 @@ public class TicketController {
                 } catch (Exception e) {
                     System.out.println("Incorrect option");
                 }
+
             } while (!exit);
         } catch (Exception e) {
             System.out.println("Bye!!!");
         }
 
 
+    }
+
+    public List<Ticket> getAllTickets() {
+        return ticketService.getAllTickets();
     }
 
     private void showProductsInTicket(List<TicketDetail> ticketDetails) {
@@ -138,7 +137,7 @@ public class TicketController {
             findTicketDetail.get().setAmount(quantity * findTicketDetail.get().getPrice());
             System.out.println(findTicketDetail);
         } else System.out.println("This product isn't in the ticket");
-        ;
+
         return ticketDetails;
 
     }
@@ -197,12 +196,13 @@ public class TicketController {
 
     }
 
-    private void showObjectList(List<?> list) {
+    public void showObjectList(List<?> list) {
         list.stream().forEach(System.out::println);
 
     }
 
     private List<Product> loadProductos() {
+        /*
         Product product1 = new Tree("T001", "Abeto", 23.60, 1.60f);
         Product product2 = new Tree("T002", "Magnolia", 16.80, 0.30f);
         Product product3 = new Tree("T003", "Pino", 23.60, 1.60f);
@@ -230,6 +230,8 @@ public class TicketController {
                 product11, product12, product13, product14, product15, product16, product17, product18, product19, product20);
 
         return products;
+         */
+        return null;
     }
 
 
