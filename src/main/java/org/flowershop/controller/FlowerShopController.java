@@ -1,92 +1,97 @@
 package org.flowershop.controller;
 
-import org.flowershop.repository.ProductRepositoryTXT;
-import org.flowershop.repository.TicketRepositoryTXT;
-import org.flowershop.service.ProductService;
-import org.flowershop.service.TicketService;
-import org.flowershop.utils.Menu;
+import org.flowershop.domain.flowerShop.FlowerShop;
+import org.flowershop.domain.tickets.Ticket;
+import org.flowershop.repository.FlowerShopRepositoryTXT;
+import org.flowershop.service.FlowerShopService;
+import org.flowershop.utils.MenuFlowerShop;
+import org.flowershop.utils.Scan.Scan;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.*;
+import java.util.List;
 
 
 public class FlowerShopController {
-
+    private final FlowerShopService flowerShopService;
     private final ProductController productController;
     private final TicketController ticketController;
 
+
     public FlowerShopController() {
-        this.productController = new ProductController();
-        this.ticketController = new TicketController();
+        flowerShopService = new FlowerShopService(new FlowerShopRepositoryTXT());
+        productController = new ProductController();
+        ticketController = new TicketController();
     }
 
-    public void mainDataRequest() {
 
-        Properties properties = new Properties();
-        String fileTicket = "";
-        String fileProduct = "";
-        try {
-            String directoryProgram = System.getProperty("user.dir");
-            String configFile = directoryProgram + "\\src\\main\\resources\\config.properties";
-            properties.load(new FileInputStream(new File(configFile)));
+    public void flowerShopHandleRequest() {
+        MenuFlowerShop flowerShopMenu = new MenuFlowerShop();
+        boolean exit = false;
+        int option;
 
-            fileTicket = directoryProgram + "\\" + (String) properties.get("fileTicket");
-            fileProduct = directoryProgram + "\\" + (String) properties.get("fileProduct");
+        do {
+            option = flowerShopMenu.menu(loadFlowerShop().getName());
+            switch (option) {
+                case 0 -> exit = true;
+                case 1 -> productController.stockHandleRequest();
+                case 2 -> productController.productHandleRequest();
+                case 3 -> ticketController.ticketDataRequest();
+                case 4 -> financialHandleRequest();
+                default -> System.out.println("Choose an option:");
+            }
+            System.out.println();
+        } while(!exit);
+    }
 
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+    public void financialHandleRequest() {
+        MenuFlowerShop menuFlowerShop = new MenuFlowerShop();
+        boolean exit = false;
+        int option;
 
-        TicketService ticketService = new TicketService(new TicketRepositoryTXT(fileTicket));
-        ProductService productService = new ProductService(new ProductRepositoryTXT(fileProduct));
+        do {
+            option = menuFlowerShop.menuFinancial("Financial balance");
+            switch (option) {
+                case 0 -> exit = true;
+                case 1 -> getTotalStoreValue();
+                case 2 -> showProfits();
+                case 3 -> showAllTickets();
+                default -> System.out.println("Choose an option.");
+            }
+            Scan.askForString("Press enter to continue...");
+            System.out.println();
+        } while(!exit);
 
-        Boolean exit = false;
-
-        try {
-            do {
-                try {
-                    int option = Menu.showMainMenu();
-                    System.out.println(option);
-                    switch (option) {
-                        case 1:
-                            //TODO Go to Products Menu
-                            productController.productDataRequest(productService);
-                            break;
-                        case 2:
-                            //TODO Go to Tickets Menu
-                            ticketController.ticketDataRequest(ticketService, productService);
-                            break;
-                        case 3:
-                            //TODO Go to Queries Menu
-                            //removeProductInTicketDetail(ticketDetails);
-                            break;
-                        case 4:
-                            //TODO Exit
-                            exit = true;
-                            break;
-
-                        default:
-                            System.out.println("Incorrect option");
-                            break;
-                    }
-                } catch (Exception e) {
-                    System.out.println("Incorrect option");
-                }
-            } while (!exit);
-        } catch (Exception e) {
-            System.out.println("Bye!!!");
-        }
+    }
 
 
+    public List<FlowerShop> load() {
+        return flowerShopService.getFlowerShops();
+    }
+
+    public FlowerShop loadFlowerShop() {
+        return flowerShopService.getFlowerShops().get(0);
+    }
+
+    public void add(FlowerShop flowerShop) {
+        flowerShopService.addFlowerShop(flowerShop);
+    }
+
+    public void getTotalStoreValue() {
+        double totalValue = productController.getTotalStoreValue();
+        System.out.println("Total flower shop value: " + totalValue);
+    }
+
+    public void showAllTickets() {
+        List<Ticket> tickets = ticketController.getAllTickets();
+        ticketController.showObjectList(tickets);
+    }
+
+    public void showProfits() {
+        List<Ticket> tickets = ticketController.getAllTickets();
+        double profits = tickets.stream()
+                .filter(Ticket::getFinished)
+                .mapToDouble(Ticket::getAmount)
+                .sum();
+        System.out.println("Total profits: " + profits);
     }
 
 }
-
-

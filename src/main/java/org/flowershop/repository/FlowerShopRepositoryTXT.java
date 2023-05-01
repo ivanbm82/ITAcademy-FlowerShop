@@ -7,22 +7,37 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 
 public class FlowerShopRepositoryTXT implements IFlowerShopRepository {
-    // The path to save the file.
-    public static String filePath;
+    private Properties properties;
+    private String fileName;
     File file;
     private ObjectMapper objectMapper;
     private List<FlowerShop> flowerShops;
 
 
-    public FlowerShopRepositoryTXT(String fileProduct) {
-        filePath = fileProduct;
+    public FlowerShopRepositoryTXT() {
+        properties = new Properties();
+
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("config.properties")) {
+            properties.load(inputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        fileName = properties.getProperty("fileFlowershop");
 
         objectMapper = new ObjectMapper();
-        flowerShops = new ArrayList<FlowerShop>();
-        file = new File(filePath);
+        file = new File(fileName);
+        if (!file.exists()) {
+            file.getParentFile().mkdirs(); // Create directory if not exists
+            try {
+                file.createNewFile(); // Create the file if not exists.
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         loadFlowerShops();
     }
@@ -34,8 +49,13 @@ public class FlowerShopRepositoryTXT implements IFlowerShopRepository {
      */
     @Override
     public void addFlowerShop(FlowerShop flowerShop) {
-        flowerShops.add(flowerShop);
-        saveFlowerShops();
+        if (!flowerShops.stream().anyMatch(p -> p.getName().equals(flowerShop.getName()))) {
+            flowerShops.add(flowerShop);
+            saveFlowerShops();
+            System.out.println("The flower shop has been added.");
+        } else {
+            System.out.println("The flower shop with name " + flowerShop.getName() + " already exists.");
+        }
     }
 
     /**
@@ -65,22 +85,6 @@ public class FlowerShopRepositoryTXT implements IFlowerShopRepository {
     }
 
     /**
-     * This method get a flower shop by ref.
-     *
-     * @param ref  The code reference of the flower shop.
-     * @return     The flower shop with the specified ref.
-     */
-    @Override
-    public FlowerShop getFlowerShopByRef(String ref) {
-        for (FlowerShop flowerShop: flowerShops) {
-            if (flowerShop.getRef().equals(ref)) {
-                return flowerShop;
-            }
-        }
-        return null;
-    }
-
-    /**
      * This method get a flower shop by name.
      *
      * @param name  The name of the flower shop.
@@ -103,12 +107,10 @@ public class FlowerShopRepositoryTXT implements IFlowerShopRepository {
      * @param flowerShop  The flower shop with updated values.
      */
     @Override
-    public void updateFlowerShop(FlowerShop flowerShop, String ref, String name) {
+    public void updateFlowerShop(FlowerShop flowerShop, String name) {
         if (flowerShop == null) return;
 
-        flowerShop.setRef(ref);
         flowerShop.setName(name);
-
         saveFlowerShops();
     }
 
@@ -131,28 +133,11 @@ public class FlowerShopRepositoryTXT implements IFlowerShopRepository {
     }
 
     /**
-     * This method removes from de list the specified flower shop by id.
-     *
-     * @param ref
-     */
-    @Override
-    public void removeFlowerShopByRef(String ref) {
-        Iterator<FlowerShop> iterator = flowerShops.iterator();
-        while (iterator.hasNext()) {
-            FlowerShop flowerShop = iterator.next();
-            if (flowerShop.getRef().equals(ref)) {
-                iterator.remove();
-                break;
-            }
-        }
-        saveFlowerShops();
-    }
-
-    /**
      * This method saves the list of flower shops to a file.
      */
+    @Override
     public void saveFlowerShops() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
             for (FlowerShop flowerShop : flowerShops) {
                 String json = objectMapper.writeValueAsString(flowerShop);
                 writer.write(json);
@@ -166,14 +151,14 @@ public class FlowerShopRepositoryTXT implements IFlowerShopRepository {
     /**
      * This method loads the flower shops file.
      */
+    @Override
     public void loadFlowerShops(){
-        if (!file.exists()) return;
+        //if (!file.exists()) return;
 
         String line;
         FlowerShop flowerShop = null;
         List<FlowerShop> flowerShops = new ArrayList<FlowerShop>();
-
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             while ((line = br.readLine()) != null) {
                 flowerShop = objectMapper.readValue(line, FlowerShop.class);
                 flowerShops.add(flowerShop);
@@ -182,6 +167,7 @@ public class FlowerShopRepositoryTXT implements IFlowerShopRepository {
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
 

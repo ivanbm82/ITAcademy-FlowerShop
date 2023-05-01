@@ -10,29 +10,44 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.flowershop.domain.products.Tree;
 
 
 public class ProductRepositoryTXT implements IProductRepository {
-    // Put the path to save the file.
-    public static String filePath;
+    private final Properties properties;
+    private static String fileName;
     File file;
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
     private List<Product> products;
 
-    public ProductRepositoryTXT(String fileProduct) {
-        // Put the file path to save
-        //filePath = "..\\flowerShopData\\products.txt";
-        filePath = fileProduct;
+
+    public ProductRepositoryTXT() {
+        properties = new Properties();
+
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("config.properties")) {
+            properties.load(inputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        fileName = properties.getProperty("fileProduct");
 
         objectMapper = new ObjectMapper();
-        products = new ArrayList<Product>();
-        file = new File(filePath);
-
+        products = new ArrayList<>();
+        file = new File(fileName);
+        if (!file.exists()) {
+            file.getParentFile().mkdirs(); // Create directory if not exists
+            try {
+                file.createNewFile(); // Create the file if not exists.
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         loadProducts();
+        Product.setLastId(products.size());
     }
 
     /**
@@ -40,7 +55,7 @@ public class ProductRepositoryTXT implements IProductRepository {
      */
     @Override
     public void saveProducts() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
             for (Product product : products) {
                 String json = objectMapper.writeValueAsString(product);
                 writer.write(json);
@@ -62,7 +77,7 @@ public class ProductRepositoryTXT implements IProductRepository {
         List<Product> products = new ArrayList<Product>();
 
         ObjectMapper objectMapper = new ObjectMapper();
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
 
             while ((line = br.readLine()) != null) {
                 // Read file line as a tree of json nodes
@@ -105,8 +120,12 @@ public class ProductRepositoryTXT implements IProductRepository {
      */
     @Override
     public void addProduct(Product product) {
-        products.add(product);
-        saveProducts();
+        if( getProductByRef(product.getRef()) != null  ) {
+            System.out.println("The product with ref. " + product.getRef() + " already exists.");
+        } else {
+            products.add(product);
+            saveProducts();
+        }
     }
 
     /**
@@ -168,6 +187,15 @@ public class ProductRepositoryTXT implements IProductRepository {
         saveProducts();
     }
 
+    @Override
+    public void updateProduct(Product product) {
+        if (products.stream().anyMatch(p -> p.getRef().equals(product.getRef()))) {
+            saveProducts();
+        } else {
+            System.out.println("The product is not in stock.");
+        }
+    }
+
     /**
      * This method removes from de list the specified product by id.
      *
@@ -203,6 +231,5 @@ public class ProductRepositoryTXT implements IProductRepository {
         }
         saveProducts();
     }
-
 
 }

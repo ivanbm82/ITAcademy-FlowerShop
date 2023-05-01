@@ -11,6 +11,7 @@ public interface IProductRepository {
     Product getProductByRef(String ref);
     List<Product> getProducts();
     void updateProductById(long id, Product product);
+    void updateProduct(Product product);
     void removeProductById(long id);
     void removeProductByRef(String ref);
     void saveProducts();

@@ -4,176 +4,313 @@ import org.flowershop.domain.products.Decoration;
 import org.flowershop.domain.products.Flower;
 import org.flowershop.domain.products.Product;
 import org.flowershop.domain.products.Tree;
-import org.flowershop.domain.tickets.Ticket;
-import org.flowershop.domain.tickets.TicketDetail;
+
 import org.flowershop.repository.ProductRepositoryTXT;
-import org.flowershop.repository.TicketRepositoryTXT;
 import org.flowershop.service.ProductService;
-import org.flowershop.service.TicketService;
-import org.flowershop.utils.Menu;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import org.flowershop.exceptions.NegativeValueException;
+import org.flowershop.utils.MenuProducts;
+import org.flowershop.utils.Scan.Scan;
+
 import java.text.DecimalFormat;
-import java.util.*;
-
-import static org.flowershop.utils.Scan.Scan.askForInt;
-import static org.flowershop.utils.Scan.Scan.askForString;
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ProductController {
+    ProductService productService;
+    MenuProducts menuProducts;
+    DecimalFormat df;
 
-
-    public void productDataRequest(ProductService productService) {
-
-        List<Product> products = loadProductos();
-        products.forEach(productService::addProduct);
-
-        Boolean exit = false;
-
-        try {
-            do {
-                try {
-                    int option = Menu.showTicketOptions();
-                    System.out.println(option);
-                    switch (option) {
-                        case 1:
-                            //TODO Adding new product
-                            //addProductInTicketDetail(products, ticketDetails);
-                            break;
-                        case 2:
-
-                            //TODO Update Product by ID
-                            //modifyQuantityInTicketDetail(ticketDetails);
-                            break;
-                        case 3:
-                            //TODO Deleting product
-                            //removeProductInTicketDetail(ticketDetails);
-                            break;
-                        case 4:
-                            //TODO Print all products
-                            productService.getProducts();
-                            break;
-                        case 5:
-                            //TODO Exit from Product Menu
-                            exit = true;
-                            break;
-                        default:
-                            System.out.println("Incorrect option");
-                            break;
-                    }
-                } catch (Exception e) {
-                    System.out.println("Incorrect option");
-                }
-            } while (!exit);
-        } catch (Exception e) {
-            System.out.println("Bye!!!");
-        }
-
-
+    public ProductController() {
+        productService = new ProductService( new ProductRepositoryTXT());
+        menuProducts = new MenuProducts();
+        df = new DecimalFormat("#.##");
     }
 
-    private void showProductsInTicket(List<TicketDetail> ticketDetails) {
-        showObjectList(ticketDetails);
-        DecimalFormat df = new DecimalFormat("#.##");
-        Double total = ticketDetails.stream().mapToDouble(TicketDetail::getAmount).sum();
-        System.out.println("Total ticket: " + df.format(total));
-    }
 
-    private void saveTicket(TicketService ticketService, List<TicketDetail> ticketDetails) throws IOException {
-        Double total = ticketDetails.stream().mapToDouble(TicketDetail::getAmount).sum();
-        Ticket ticket = new Ticket(ticketService.getLastTicketId(), new Date(), 1L, total, true);
-        ticketDetails.stream().forEach(ticket::addTicketDetail);
+    public void stockHandleRequest() {
+        boolean exit = false;
+        int option;
 
-        ticketService.addTicket(ticket);
-        System.out.println(ticket);
-
-        ticketDetails.clear();
-    }
-
-    private List<TicketDetail> modifyQuantityInTicketDetail(List<TicketDetail> ticketDetails) {
-
-        System.out.println("Update Product in TicketDetail ...");
-        showObjectList(ticketDetails);
-
-        String reference = askForString("Input product reference to update");
-
-        Optional<TicketDetail> findTicketDetail = ticketDetails.stream().filter(p -> p.getRef().equalsIgnoreCase(reference)).findFirst();
-
-        if (findTicketDetail.isPresent()) {
-            Integer quantity = askForInt("Input new quantity");
-
-            findTicketDetail.get().setQuantity(quantity);
-            findTicketDetail.get().setAmount(quantity * findTicketDetail.get().getPrice());
-            System.out.println(findTicketDetail);
-        } else System.out.println("This product isn't in the ticket");
-        ;
-        return ticketDetails;
-
-    }
-
-    private List<TicketDetail> removeProductInTicketDetail(List<TicketDetail> ticketDetails) {
-        System.out.println("Remove Product in TicketDetail ...");
-        showObjectList(ticketDetails);
-
-        if (ticketDetails.size() > 0) {
-            String reference = askForString("Input product reference to remove");
-
-            //TODO Verify if product exits in ticket detail
-            Optional<TicketDetail> findTicketDetail = ticketDetails.stream().filter(p -> p.getRef().equalsIgnoreCase(reference)).findFirst();
-
-            if (findTicketDetail.isPresent()) {
-
-                Iterator<TicketDetail> it = ticketDetails.iterator();
-                while (it.hasNext()) {
-                    String ref = it.next().getRef();
-                    if (ref.equalsIgnoreCase(reference)) {
-                        it.remove();
-                        System.out.println("Product " + reference + " remove in ticket");
-                    }
-                }
-            } else System.out.println("There isn't reference in ticket");
-        } else System.out.println("There aren't products in ticket");
-        return ticketDetails;
-
-    }
-
-    private List<TicketDetail> addProductInTicketDetail(List<Product> products, List<TicketDetail> ticketDetails) {
-        System.out.println("Add Product in Order ...");
-        showObjectList(products);
-        String reference = askForString("Input product reference");
-
-
-        //TODO Verify if product exits
-        Optional<Product> findProduct = products.stream().filter(p -> p.getRef().equalsIgnoreCase(reference)).findFirst();
-
-        if (findProduct.isPresent()) {
-            //TODO Verify if product exits in ticket detail
-            Optional<TicketDetail> findTicketDetail = ticketDetails.stream().filter(p -> p.getRef().equalsIgnoreCase(reference)).findFirst();
-
-            if (findTicketDetail.isPresent()) {
-                System.out.println("Product already exists in the ticket");
-            } else {
-                Integer quantity = askForInt("Input quantity");
-                TicketDetail newTicketDetail = new TicketDetail(findProduct.get().getId(), findProduct.get().getRef(),
-                        quantity, findProduct.get().getPrice(), quantity * findProduct.get().getPrice());
-                ticketDetails.add(newTicketDetail);
-
-                System.out.println(newTicketDetail);
+        do {
+            option = menuProducts.menuStock("Stock");
+            switch (option) {
+                case 0 -> exit = true;
+                case 1 -> showTotalStock();
+                case 2 -> showStockByRef();
+                case 3 -> addStockByRef();
+                default -> System.out.println("Choose an option.");
             }
+            Scan.askForString("Press enter to continue...");
+            System.out.println();
+        } while(!exit);
+    }
+
+    public void productHandleRequest() {
+        boolean exit = false;
+        int option;
+
+        do {
+            option = menuProducts.menuProducts("Products");
+            switch (option) {
+                case 0 -> exit = true;
+                case 1 -> treeHandleRequest();
+                case 2 -> flowerHandleRequest();
+                case 3 -> decorationHandleRequest();
+                default -> System.out.println("Choose an option:");
+            }
+            System.out.println();
+        } while(!exit);
+
+    }
+
+    public void treeHandleRequest() {
+        boolean exit = false;
+        int option;
+
+        do {
+            option = menuProducts.menuCRUD("Trees management");
+            switch (option) {
+                case 0 -> exit = true;
+                case 1 -> addTree();
+                case 2 -> updateTree();
+                case 3 -> remove();
+                default -> System.out.println("Choose an option:");
+            }
+            System.out.println();
+        } while(!exit);
+
+    }
+
+    public void flowerHandleRequest() {
+        boolean exit = false;
+        int option;
+
+        do {
+            option = menuProducts.menuCRUD("Flowers management");
+            switch (option) {
+                case 0 -> exit = true;
+                case 1 -> addFlower();
+                case 2 -> updateFlower();
+                case 3 -> remove();
+                default -> System.out.println("Choose an option:");
+            }
+            System.out.println();
+        } while(!exit);
+
+    }
+
+    public void decorationHandleRequest() {
+        boolean exit = false;
+        int option;
+
+        do {
+            option = menuProducts.menuCRUD("Decoration management");
+            switch (option) {
+                case 0 -> exit = true;
+                case 1 -> addDecoration();
+                case 2 -> updateDecoraton();
+                case 3 -> remove();
+                default -> System.out.println("Choose an option:");
+            }
+            System.out.println();
+        } while(!exit);
+
+    }
+
+
+    public void remove() {
+        String ref = Scan.askForString("Delete product by reference:");
+        productService.removeProductByRef(ref);
+    }
+
+    public void addTree() {
+        System.out.println("add new product");
+        String ref = Scan.askForString("Ref:");
+        String name = Scan.askForString("Name:");
+        float height = Scan.askForFloat("Height:");
+        double price = Scan.askForDouble("Price:");
+        Tree tree = new Tree(ref, name, price, height);
+        int stock = Scan.askForInt("Stock:");
+        try {
+            tree.setStock(stock);
+        } catch (NegativeValueException e) {
+            throw new RuntimeException(e);
         }
-        return ticketDetails;
+        productService.addProduct(tree);
+    }
+
+    public void updateTree() {
+        String ref = Scan.askForString("Select product by ref:");
+        Product product = productService.getProductByRef(ref);
+        if ( !(product instanceof Tree) ) {
+            System.out.println("unrecognized tree product");
+            return;
+        }
+        Tree tree = (Tree) product;
+        String name = Scan.askForString("Name:");
+        float height = Scan.askForFloat("Height:");
+        double price = Scan.askForDouble("Price:");
+        tree.setName(name);
+        tree.setHeight(height);
+        try {
+            tree.setPrice(price);
+        } catch (NegativeValueException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void addFlower() {
+        System.out.println("add new product");
+        String ref = Scan.askForString("Ref:");
+        String name = Scan.askForString("Name:");
+        String color = Scan.askForString("Color:");
+        double price = Scan.askForDouble("Price:");
+        Flower flower = new Flower(ref, name, price, color);
+        int stock = Scan.askForInt("Stock:");
+        try {
+            flower.setStock(stock);
+        } catch (NegativeValueException e) {
+            throw new RuntimeException(e);
+        }
+        productService.addProduct(flower);
+    }
+
+    public void updateFlower() {
+        String ref = Scan.askForString("Select product by ref:");
+        Product product = productService.getProductByRef(ref);
+        if ( !(product instanceof Flower) ) {
+            System.out.println("unrecognized tree product");
+            return;
+        }
+        Flower flower = (Flower) product;
+        String name = Scan.askForString("Name:");
+        String color = Scan.askForString("Color:");
+        double price = Scan.askForDouble("Price:");
+        flower.setName(name);
+        flower.setColor(color);
+        try {
+            flower.setPrice(price);
+        } catch (NegativeValueException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void addDecoration() {
+        System.out.println("add new product");
+        String ref = Scan.askForString("Ref:");
+        String name = Scan.askForString("Name:");
+        String type = Scan.askForString("Type:");
+        double price = Scan.askForDouble("Price:");
+        Decoration decoration = new Decoration(ref, name, price, type);
+        int stock = Scan.askForInt("Stock:");
+        try {
+            decoration.setStock(stock);
+        } catch (NegativeValueException e) {
+            throw new RuntimeException(e);
+        }
+        productService.addProduct(decoration);
+    }
+
+    public void updateDecoraton() {
+        String ref = Scan.askForString("Select product by ref:");
+        Product product = productService.getProductByRef(ref);
+        if ( !(product instanceof Decoration) ) {
+            System.out.println("unrecognized tree product");
+            return;
+        }
+        Decoration decoration = (Decoration) product;
+        String name = Scan.askForString("Name:");
+        String type = Scan.askForString("Type:");
+        double price = Scan.askForDouble("Price:");
+        decoration.setName(name);
+        decoration.setType(type);
+        try {
+            decoration.setPrice(price);
+        } catch (NegativeValueException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void addStockByRef() {
+        String ref = Scan.askForString("Ref:");
+        int quantity = Scan.askForInt(("Quantity:"));
+        productService.updateStockbyRef(ref, quantity);
+    }
+
+    public double getTotalStoreValue() {
+        List<Product> products = productService.getProducts();
+        double totalValue = products.stream()
+                .mapToDouble(product -> product.getPrice() * product.getStock())
+                .sum();
+        return totalValue;
+    }
+
+    public void showTotalStock() {
+        List<Product> products = productService.getProducts();
+        List<Tree> trees = new ArrayList<>();
+        List<Flower> flowers = new ArrayList<>();
+        List<Decoration> decorations = new ArrayList<>();
+
+        products.forEach( product -> {
+            if (product instanceof Tree) {
+                trees.add((Tree) product);
+            } else if (product instanceof Flower) {
+                flowers.add((Flower) product);
+            }else if (product instanceof Decoration) {
+                decorations.add((Decoration) product);
+            }
+        } );
+        // Display terminal
+        System.out.println("TREES");
+        trees.forEach(tree -> System.out.println("    " + tree.getRef() + ", " + tree.getName()
+                + ", height: " + tree.getHeight()
+                + ", price: " + df.format(tree.getPrice())
+                + ", stock: " + tree.getStock()));
+        System.out.println("FLOWERS");
+        flowers.forEach(flower -> System.out.println("    " + flower.getRef() + ", " + flower.getName()
+                + ", color: " + flower.getColor()
+                + ", price: " + df.format(flower.getPrice())
+                + ", stock: " + flower.getStock()));
+        System.out.println("DECORATION");
+        decorations.forEach(decoration -> System.out.println("    " + decoration.getRef() + ", " + decoration.getName()
+                + ", tipo: " + decoration.getType()
+                + ", price: " + df.format(decoration.getPrice())
+                + ", stock: " + decoration.getStock()));
+    }
+
+    public void showStockByRef() {
+        String ref = Scan.askForString("Ref: ");
+        Product product = productService.getProductByRef(ref);
+
+        if (product instanceof Tree) {
+            System.out.print("TREE: ");
+            System.out.println(product.getRef() + ", " + product.getName()
+                    + ", height: " + ((Tree) product).getHeight()
+                    + ", price: " + df.format(product.getPrice())
+                    + ", stock: " + product.getStock());
+        } else if (product instanceof Flower) {
+            System.out.print("FLOWER: ");
+            System.out.println(product.getRef() + ", " + product.getName()
+                    + ", color: " + ((Flower) product).getColor()
+                    + ", price: " + df.format(product.getPrice())
+                    + ", stock: " + product.getStock());
+        }else if (product instanceof Decoration) {
+            System.out.print("DECORATION: ");
+            System.out.println(product.getRef() + ", " + product.getName()
+                    + ", type: " + ((Decoration) product).getType()
+                    + ", price: " + df.format(product.getPrice())
+                    + ", stock: " + product.getStock());
+        } else {
+            System.out.println("There is no product with this reference.");
+        }
 
     }
 
-    private void showObjectList(List<?> list) {
-        list.stream().forEach(System.out::println);
 
-    }
+    private List<Product> loadProducts() {
 
-    private List<Product> loadProductos() {
         Product product1 = new Tree("T001", "Abeto", 23.60, 1.60f);
         Product product2 = new Tree("T002", "Magnolia", 16.80, 0.30f);
         Product product3 = new Tree("T003", "Pino", 23.60, 1.60f);
@@ -202,6 +339,5 @@ public class ProductController {
 
         return products;
     }
-
 
 }
