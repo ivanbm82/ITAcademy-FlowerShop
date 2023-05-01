@@ -39,6 +39,7 @@ public class ProductRepositoryTXT implements IProductRepository {
         file = new File(fileName);
 
         loadProducts();
+        Product.setLastId(products.size());
     }
 
     /**
