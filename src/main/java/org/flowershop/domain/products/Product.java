@@ -80,7 +80,7 @@ public abstract class Product {
     /**
      * This method updates the stock quantity of a product by adding or subtracting a quantity.
      *
-     * @param quantity
+     * @param quantity                 Quantity to add or extract from the product.
      * @throws NegativeValueException  If the stock tries to update to a negative value.
      */
     public void updateStock(int quantity) throws NegativeValueException {
