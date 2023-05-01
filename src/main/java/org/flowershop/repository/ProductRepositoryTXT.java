@@ -37,6 +37,14 @@ public class ProductRepositoryTXT implements IProductRepository {
         objectMapper = new ObjectMapper();
         products = new ArrayList<>();
         file = new File(fileName);
+        if (!file.exists()) {
+            file.getParentFile().mkdirs(); // Create directory if not exists
+            try {
+                file.createNewFile(); // Create the file if not exists.
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         loadProducts();
         Product.setLastId(products.size());

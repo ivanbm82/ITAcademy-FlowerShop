@@ -13,7 +13,7 @@ import java.util.Properties;
 public class FlowerShopRepositoryTXT implements IFlowerShopRepository {
     private Properties properties;
     private String fileName;
-    //File file;
+    File file;
     private ObjectMapper objectMapper;
     private List<FlowerShop> flowerShops;
 
@@ -29,6 +29,15 @@ public class FlowerShopRepositoryTXT implements IFlowerShopRepository {
         fileName = properties.getProperty("fileFlowershop");
 
         objectMapper = new ObjectMapper();
+        file = new File(fileName);
+        if (!file.exists()) {
+            file.getParentFile().mkdirs(); // Create directory if not exists
+            try {
+                file.createNewFile(); // Create the file if not exists.
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         loadFlowerShops();
     }
