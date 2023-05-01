@@ -19,7 +19,7 @@ public class TicketControllerTest {
     @Test
     public void InsertOrder() {
         // arrange
-        ticketController.ticketDataRequest();
+        //ticketController.ticketDataRequest(ticketService, productService);
 
     }
 

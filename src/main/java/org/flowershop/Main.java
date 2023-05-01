@@ -1,14 +1,16 @@
 package org.flowershop;
 
-import org.flowershop.controller.TicketController;
+
+import org.flowershop.controller.FlowerShopController;
 
 public class Main {
+
     public static void main(String[] args) {
 
-        TicketController ticketController = new TicketController();
+        FlowerShopController flowerShopController = new FlowerShopController();
 
-        ticketController.ticketDataRequest();
+        flowerShopController.mainDataRequest();
 
-        System.out.println("Hello world!");
+        System.out.println("See you soon!!!");
     }
 }
