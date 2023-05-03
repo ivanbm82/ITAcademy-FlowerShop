@@ -24,12 +24,12 @@ public class ProductController {
     DecimalFormat df;
 
     public ProductController() {
-        productService = new ProductService( new ProductRepositoryTXT());
-        /*
+        //productService = new ProductService( new ProductRepositoryTXT());
+
         productService = new ProductService(
                 new ProductRepositorySQL("jdbc:mysql://root:Ozs9AVywm8d9r6mAI2lo@containers-us-west-131.railway.app:6126/railway","root","Ozs9AVywm8d9r6mAI2lo")
         );
-         */
+
         menuProducts = new MenuProducts();
         df = new DecimalFormat("#.##");
     }
@@ -174,6 +174,8 @@ public class ProductController {
             } catch (NegativeValueException e) {
                 throw new RuntimeException(e);
             }
+            productService.updateProduct(tree);
+            System.out.println("The product " + ref + " " + name + " has been updated.");
         }
     }
 
@@ -219,6 +221,7 @@ public class ProductController {
             } catch (NegativeValueException e) {
                 throw new RuntimeException(e);
             }
+            productService.updateProduct(flower);
             System.out.println("The product " + ref + " " + name + " has been updated.");
         }
     }
@@ -265,6 +268,7 @@ public class ProductController {
             } catch (NegativeValueException e) {
                 throw new RuntimeException(e);
             }
+            productService.updateProduct(decoration);
             System.out.println("The product " + ref + " " + name + " has been updated.");
         }
     }
