@@ -2,9 +2,7 @@ package org.flowershop.controller;
 
 import org.flowershop.domain.flowerShop.FlowerShop;
 import org.flowershop.domain.tickets.Ticket;
-import org.flowershop.repository.FlowerShopRepositoryTXT;
-import org.flowershop.repository.ProductRepositoryTXT;
-import org.flowershop.repository.TicketRepositoryTXT;
+import org.flowershop.repository.*;
 import org.flowershop.service.FlowerShopService;
 import org.flowershop.utils.MenuFlowerShop;
 import org.flowershop.utils.Scan.Scan;
@@ -21,9 +19,18 @@ public class FlowerShopController {
 
     public FlowerShopController() {
         flowerShopService = FlowerShopService.getInstance(FlowerShopRepositoryTXT.getInstance());
-        productController = ProductController.getInstance(ProductRepositoryTXT.getInstance());
-        ticketController = TicketController.getInstance(ProductRepositoryTXT.getInstance(),
-                                                        TicketRepositoryTXT.getInstance());
+        // TXT
+        //productController = ProductController.getInstance(ProductRepositoryTXT.getInstance());
+        //ticketController = TicketController.getInstance(ProductRepositoryTXT.getInstance(),
+        //                                                TicketRepositoryTXT.getInstance());
+
+        // SQL
+        ProductRepositorySQL productRepositorySQL = new ProductRepositorySQL();
+        TicketRepositorySQL ticketRepositorySQL = new TicketRepositorySQL();
+        productController = ProductController.getInstance( productRepositorySQL );
+        ticketController = TicketController.getInstance( productRepositorySQL,
+                ticketRepositorySQL);
+
     }
 
 

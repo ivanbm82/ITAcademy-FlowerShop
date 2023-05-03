@@ -20,7 +20,8 @@ public class Ticket implements Serializable {
     private List<TicketDetail> ticketDetailList;
 
     public Ticket(Long id, Date date, Long client, Double amount, Boolean finished) {
-        this.id = ++id;
+        //this.id = ++id;
+        this.id = id;
         this.date = date;
         this.client = client;
         this.amount = amount;
@@ -55,6 +56,10 @@ public class Ticket implements Serializable {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Date getDate() {
         return date;
     }
@@ -73,6 +78,14 @@ public class Ticket implements Serializable {
 
     public void setFinishedTrue() {
         this.finished = true;
+    }
+
+    public List<TicketDetail> getTicketDetailList() {
+        return ticketDetailList;
+    }
+
+    public void setTicketDetailList(List<TicketDetail> ticketDetailList) {
+        this.ticketDetailList = ticketDetailList;
     }
 
     @Override

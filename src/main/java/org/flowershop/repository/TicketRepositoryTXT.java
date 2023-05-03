@@ -88,7 +88,7 @@ public class TicketRepositoryTXT implements ITicketRepository {
         FileReader fr = null;
         BufferedReader br = null;
         String file1 = this.getFileTicket();
-        ;
+
         Boolean encontrado = false;
 
         try {
@@ -172,7 +172,6 @@ public class TicketRepositoryTXT implements ITicketRepository {
         FileReader fr = null;
         BufferedReader br = null;
         String file1 = this.getFileTicket();
-        ;
 
         try {
             file = new File(file1);

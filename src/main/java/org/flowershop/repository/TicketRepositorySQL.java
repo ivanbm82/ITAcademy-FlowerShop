@@ -3,17 +3,34 @@ package org.flowershop.repository;
 import org.flowershop.domain.tickets.Ticket;
 import org.flowershop.domain.tickets.TicketDetail;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 public class TicketRepositorySQL implements ITicketRepository {
     private final Connection connection;
+    private final Properties properties;
+    private String uri;
+    private String user;
+    private String password;
 
-    public TicketRepositorySQL(String url, String user, String password) {
+    public TicketRepositorySQL() {
+        properties = new Properties();
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("config.properties")) {
+            properties.load(inputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        uri = properties.getProperty("uri_sql");
+        user = properties.getProperty("user");
+        password = properties.getProperty("pass");
+
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            connection = DriverManager.getConnection(url, user, password);
+            connection = DriverManager.getConnection(uri, user, password);
         } catch (ClassNotFoundException ex) {
             System.out.println("Error al registrar el driver de MySQL: " + ex);
             throw new RuntimeException(ex);
@@ -38,11 +55,11 @@ public class TicketRepositorySQL implements ITicketRepository {
             ResultSet resultSet = statement.getGeneratedKeys();
             resultSet.next();
             long id = resultSet.getLong(1);
-            //ticket.setId(id);
-/*
+            ticket.setId(id);
+
             for (TicketDetail ticketDetail : ticket.getTicketDetailList()) {
                 PreparedStatement detailStatement = connection.prepareStatement(
-                        "INSERT INTO ticket_details (id_ticket, id_product, ref, quantity, price, amount) VALUES (?, ?, ?, ?, ?, ?)");
+                        "INSERT INTO ticket_details (ticket_id, product_id, ref, quantity, price, amount) VALUES (?, ?, ?, ?, ?, ?)");
                 detailStatement.setLong(1, id);
                 detailStatement.setLong(2, ticketDetail.getIdProduct());
                 detailStatement.setString(3, ticketDetail.getRef());
@@ -52,7 +69,6 @@ public class TicketRepositorySQL implements ITicketRepository {
                 detailStatement.executeUpdate();
             }
 
- */
         } catch (SQLException ex) {
             System.out.println("Error al agregar ticket: " + ex);
             throw new RuntimeException(ex);

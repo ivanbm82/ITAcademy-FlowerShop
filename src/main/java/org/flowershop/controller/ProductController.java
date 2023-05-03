@@ -26,12 +26,7 @@ public class ProductController {
 
     private ProductController(IProductRepository repository) {
         productService = ProductService.getInstance(repository);
-
-/*
-        productService = new ProductService(
-                new ProductRepositorySQL("jdbc:mysql://root:m6yqhKG0QAHKIfEceA2z@containers-us-west-142.railway.app:7013/railway","root","m6yqhKG0QAHKIfEceA2z")
-        );
-*/
+        
         menuProducts = new MenuProducts();
         df = new DecimalFormat("#.##");
     }
