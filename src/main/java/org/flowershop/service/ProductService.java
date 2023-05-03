@@ -23,6 +23,7 @@ public class ProductService {
     }
 
     public List<Product> getProducts() {
+        repository.loadProducts();
         return repository.getProducts();
     }
 
