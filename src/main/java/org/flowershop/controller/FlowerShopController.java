@@ -18,8 +18,8 @@ public class FlowerShopController {
 
 
     public FlowerShopController() {
-        flowerShopService = FlowerShopService.getInstance(FlowerShopRepositoryTXT.getInstance());
         // TXT
+        //flowerShopService = FlowerShopService.getInstance(FlowerShopRepositoryTXT.getInstance());
         //productController = ProductController.getInstance(ProductRepositoryTXT.getInstance());
         //ticketController = TicketController.getInstance(ProductRepositoryTXT.getInstance(),
         //                                                TicketRepositoryTXT.getInstance());
@@ -27,10 +27,10 @@ public class FlowerShopController {
         // SQL
         ProductRepositorySQL productRepositorySQL = new ProductRepositorySQL();
         TicketRepositorySQL ticketRepositorySQL = new TicketRepositorySQL();
-        productController = ProductController.getInstance( productRepositorySQL );
+        flowerShopService = FlowerShopService.getInstance( new FlowerShopRepositorySQL() );
+        productController = ProductController.getInstance( new ProductRepositorySQL() );
         ticketController = TicketController.getInstance( productRepositorySQL,
                 ticketRepositorySQL);
-
     }
 
 
