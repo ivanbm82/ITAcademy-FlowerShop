@@ -2,6 +2,8 @@ package org.flowershop.repository;
 
 import org.flowershop.domain.tickets.Ticket;
 import org.flowershop.domain.tickets.TicketDetail;
+
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +24,7 @@ public class TicketRepositorySQL implements iTicketRepositoryText {
         }
     }
 
+    @Override
     public Ticket addTicket(Ticket ticket) {
         try {
             PreparedStatement statement = connection.prepareStatement(
@@ -36,8 +39,8 @@ public class TicketRepositorySQL implements iTicketRepositoryText {
             ResultSet resultSet = statement.getGeneratedKeys();
             resultSet.next();
             long id = resultSet.getLong(1);
-            ticket.setId(id);
-
+            //ticket.setId(id);
+/*
             for (TicketDetail ticketDetail : ticket.getTicketDetailList()) {
                 PreparedStatement detailStatement = connection.prepareStatement(
                         "INSERT INTO ticket_details (id_ticket, id_product, ref, quantity, price, amount) VALUES (?, ?, ?, ?, ?, ?)");
@@ -49,6 +52,8 @@ public class TicketRepositorySQL implements iTicketRepositoryText {
                 detailStatement.setDouble(6, ticketDetail.getAmount());
                 detailStatement.executeUpdate();
             }
+
+ */
         } catch (SQLException ex) {
             System.out.println("Error al agregar ticket: " + ex);
             throw new RuntimeException(ex);
@@ -89,7 +94,6 @@ public class TicketRepositorySQL implements iTicketRepositoryText {
         }
         return ticket;
     }
-
 
     @Override
     public List<Ticket> getAllTickets() {
@@ -138,7 +142,6 @@ public class TicketRepositorySQL implements iTicketRepositoryText {
 
         return ticketList;
     }
-
 
     @Override
     public Long getLastTicketId() {

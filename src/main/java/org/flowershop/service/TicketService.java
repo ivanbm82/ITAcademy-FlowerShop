@@ -18,7 +18,7 @@ public class TicketService {
     /**
      *
      * @param ticket Ticket for add in file
-     * @return. The ticket added
+     * @return The ticket added
      * @throws IOException
      */
     public Ticket addTicket(Ticket ticket) throws IOException {
@@ -55,7 +55,7 @@ public class TicketService {
 
     /**
      *
-     * @param id. with the id ticket to remove
+     * @param id with the id ticket to remove
      * @return the ticket removed
      * @throws IOException
      */

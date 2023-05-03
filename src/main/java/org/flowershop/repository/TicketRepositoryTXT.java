@@ -14,10 +14,19 @@ import java.util.stream.Collectors;
 public class TicketRepositoryTXT implements iTicketRepositoryText {
 
     private String fileTicket;
-
+    private File file;
 
     public TicketRepositoryTXT(String fileTicket) {
         this.fileTicket = fileTicket;
+        file = new File(fileTicket);
+        if (!file.exists()) {
+            file.getParentFile().mkdirs(); // Create directory if not exists
+            try {
+                file.createNewFile(); // Create the file if not exists.
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     public String getFileTicket() {

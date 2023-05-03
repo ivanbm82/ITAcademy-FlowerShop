@@ -23,6 +23,7 @@ public class ProductService {
     }
 
     public List<Product> getProducts() {
+        repository.loadProducts();
         return repository.getProducts();
     }
 
@@ -46,6 +47,9 @@ public class ProductService {
 
     public void updateProductById(long id, Product product) {
         repository.updateProductById(id, product);
+    }
+    public void updateProduct(Product product) {
+        repository.updateProduct(product);
     }
 
     public void removeProductById(long id) {

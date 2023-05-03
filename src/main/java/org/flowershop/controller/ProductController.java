@@ -5,6 +5,7 @@ import org.flowershop.domain.products.Flower;
 import org.flowershop.domain.products.Product;
 import org.flowershop.domain.products.Tree;
 
+import org.flowershop.repository.ProductRepositorySQL;
 import org.flowershop.repository.ProductRepositoryTXT;
 import org.flowershop.service.ProductService;
 
@@ -23,7 +24,12 @@ public class ProductController {
     DecimalFormat df;
 
     public ProductController() {
-        productService = new ProductService( new ProductRepositoryTXT());
+        //productService = new ProductService( new ProductRepositoryTXT());
+/*
+        productService = new ProductService(
+                new ProductRepositorySQL("jdbc:mysql://root:Ozs9AVywm8d9r6mAI2lo@containers-us-west-131.railway.app:6126/railway","root","Ozs9AVywm8d9r6mAI2lo")
+        );
+*/
         menuProducts = new MenuProducts();
         df = new DecimalFormat("#.##");
     }
@@ -121,122 +127,166 @@ public class ProductController {
 
 
     public void remove() {
-        String ref = Scan.askForString("Delete product by reference:");
+        String ref = Scan.askForString("Delete product by reference:").toUpperCase().trim();
         productService.removeProductByRef(ref);
+        System.out.println("The product with ref:" + ref + " has been deleted.");
     }
 
     public void addTree() {
-        System.out.println("add new product");
-        String ref = Scan.askForString("Ref:");
-        String name = Scan.askForString("Name:");
-        float height = Scan.askForFloat("Height:");
-        double price = Scan.askForDouble("Price:");
-        Tree tree = new Tree(ref, name, price, height);
-        int stock = Scan.askForInt("Stock:");
-        try {
-            tree.setStock(stock);
-        } catch (NegativeValueException e) {
-            throw new RuntimeException(e);
+        System.out.println("Add new product");
+        String ref = Scan.askForString("Ref:").toUpperCase().trim();
+        if ( productService.getProductByRef(ref) != null ) {
+            System.out.println("The product with ref " + ref + " already exists.");
+        } else {
+            String name = Scan.askForString("Name:").toUpperCase().trim();
+            float height = Scan.askForFloat("Height:");
+            double price = Scan.askForDouble("Price:");
+            Tree tree = new Tree(ref, name, price, height);
+            int stock = Scan.askForInt("Stock:");
+            try {
+                tree.setStock(stock);
+            } catch (NegativeValueException e) {
+                throw new RuntimeException(e);
+            }
+            productService.addProduct(tree);
+            System.out.println("The product " + ref + " " + name + " has been added.");
         }
-        productService.addProduct(tree);
     }
 
     public void updateTree() {
-        String ref = Scan.askForString("Select product by ref:");
+        String ref = Scan.askForString("Select product by ref:").toUpperCase().trim();
         Product product = productService.getProductByRef(ref);
-        if ( !(product instanceof Tree) ) {
-            System.out.println("unrecognized tree product");
-            return;
-        }
-        Tree tree = (Tree) product;
-        String name = Scan.askForString("Name:");
-        float height = Scan.askForFloat("Height:");
-        double price = Scan.askForDouble("Price:");
-        tree.setName(name);
-        tree.setHeight(height);
-        try {
-            tree.setPrice(price);
-        } catch (NegativeValueException e) {
-            throw new RuntimeException(e);
+        if (product == null) {
+            System.out.println("The product with ref " + ref + " is not found.");
+        } else {
+            if ( !(product instanceof Tree) ) {
+                System.out.println("unrecognized tree product");
+                return;
+            }
+            Tree tree = (Tree) product;
+            String name = Scan.askForString("Name:").toUpperCase().trim();
+            float height = Scan.askForFloat("Height:");
+            double price = Scan.askForDouble("Price:");
+            try {
+                tree.setName(name);
+                tree.setHeight(height);
+                tree.setPrice(price);
+            } catch (NegativeValueException e) {
+                throw new RuntimeException(e);
+            }
+            productService.updateProduct(tree);
+            System.out.println("The product " + ref + " " + name + " has been updated.");
         }
     }
 
     public void addFlower() {
-        System.out.println("add new product");
-        String ref = Scan.askForString("Ref:");
-        String name = Scan.askForString("Name:");
-        String color = Scan.askForString("Color:");
-        double price = Scan.askForDouble("Price:");
-        Flower flower = new Flower(ref, name, price, color);
-        int stock = Scan.askForInt("Stock:");
-        try {
-            flower.setStock(stock);
-        } catch (NegativeValueException e) {
-            throw new RuntimeException(e);
+        System.out.println("Add new product");
+        String ref = Scan.askForString("Ref:").toUpperCase().trim();
+        if ( productService.getProductByRef(ref) != null ) {
+            System.out.println("The product with ref " + ref + " already exists.");
+        } else {
+            String name = Scan.askForString("Name:").toUpperCase().trim();
+            String color = Scan.askForString("Color:").toUpperCase().trim();
+            double price = Scan.askForDouble("Price:");
+            Flower flower = new Flower(ref, name, price, color);
+            int stock = Scan.askForInt("Stock:");
+            try {
+                flower.setStock(stock);
+            } catch (NegativeValueException e) {
+                throw new RuntimeException(e);
+            }
+            productService.addProduct(flower);
+            System.out.println("The product " + ref + " " + name + " has been added.");
         }
-        productService.addProduct(flower);
     }
 
     public void updateFlower() {
-        String ref = Scan.askForString("Select product by ref:");
+        String ref = Scan.askForString("Select product by ref:").toUpperCase().trim();
         Product product = productService.getProductByRef(ref);
-        if ( !(product instanceof Flower) ) {
-            System.out.println("unrecognized tree product");
-            return;
-        }
-        Flower flower = (Flower) product;
-        String name = Scan.askForString("Name:");
-        String color = Scan.askForString("Color:");
-        double price = Scan.askForDouble("Price:");
-        flower.setName(name);
-        flower.setColor(color);
-        try {
-            flower.setPrice(price);
-        } catch (NegativeValueException e) {
-            throw new RuntimeException(e);
+        if (product == null) {
+            System.out.println("The product with ref " + ref + " is not found.");
+        } else {
+            if ( !(product instanceof Flower) ) {
+                System.out.println("unrecognized tree product");
+                return;
+            }
+            Flower flower = (Flower) product;
+            String name = Scan.askForString("Name:").toUpperCase().trim();
+            String color = Scan.askForString("Color:").toUpperCase().trim();
+            double price = Scan.askForDouble("Price:");
+            try {
+                flower.setName(name);
+                flower.setColor(color);
+                flower.setPrice(price);
+            } catch (NegativeValueException e) {
+                throw new RuntimeException(e);
+            }
+            productService.updateProduct(flower);
+            System.out.println("The product " + ref + " " + name + " has been updated.");
         }
     }
 
     public void addDecoration() {
-        System.out.println("add new product");
-        String ref = Scan.askForString("Ref:");
-        String name = Scan.askForString("Name:");
-        String type = Scan.askForString("Type:");
-        double price = Scan.askForDouble("Price:");
-        Decoration decoration = new Decoration(ref, name, price, type);
-        int stock = Scan.askForInt("Stock:");
-        try {
-            decoration.setStock(stock);
-        } catch (NegativeValueException e) {
-            throw new RuntimeException(e);
+        System.out.println("Add new product");
+        String ref = Scan.askForString("Ref:").toUpperCase().trim();
+        if ( productService.getProductByRef(ref) != null ) {
+            System.out.println("The product with ref " + ref + " already exists.");
+        } else {
+            String name = Scan.askForString("Name:").toUpperCase().trim();
+            String type = Scan.askForString("Type:").toUpperCase().trim();
+            double price = Scan.askForDouble("Price:");
+            Decoration decoration = new Decoration(ref, name, price, type);
+            int stock = Scan.askForInt("Stock:");
+            try {
+                decoration.setStock(stock);
+            } catch (NegativeValueException e) {
+                throw new RuntimeException(e);
+            }
+            productService.addProduct(decoration);
+            System.out.println("The product " + ref + " " + name + " has been added.");
         }
-        productService.addProduct(decoration);
     }
 
     public void updateDecoraton() {
         String ref = Scan.askForString("Select product by ref:");
         Product product = productService.getProductByRef(ref);
-        if ( !(product instanceof Decoration) ) {
-            System.out.println("unrecognized tree product");
-            return;
-        }
-        Decoration decoration = (Decoration) product;
-        String name = Scan.askForString("Name:");
-        String type = Scan.askForString("Type:");
-        double price = Scan.askForDouble("Price:");
-        decoration.setName(name);
-        decoration.setType(type);
-        try {
-            decoration.setPrice(price);
-        } catch (NegativeValueException e) {
-            throw new RuntimeException(e);
+        if (product == null) {
+            System.out.println("The product with ref " + ref + " is not found.");
+        } else {
+            if ( !(product instanceof Decoration) ) {
+                System.out.println("unrecognized tree product");
+                return;
+            }
+            Decoration decoration = (Decoration) product;
+            String name = Scan.askForString("Name:");
+            String type = Scan.askForString("Type:");
+            double price = Scan.askForDouble("Price:");
+            try {
+                decoration.setName(name);
+                decoration.setType(type);
+                decoration.setPrice(price);
+            } catch (NegativeValueException e) {
+                throw new RuntimeException(e);
+            }
+            productService.updateProduct(decoration);
+            System.out.println("The product " + ref + " " + name + " has been updated.");
         }
     }
 
+
     public void addStockByRef() {
-        String ref = Scan.askForString("Ref:");
-        int quantity = Scan.askForInt(("Quantity:"));
-        productService.updateStockbyRef(ref, quantity);
+        if ( getTotalStock() <= 0 ) {
+            System.out.println("No stock available.");
+        } else {
+            String ref = Scan.askForString("Ref:").toUpperCase().trim();
+            if (productService.getProductByRef(ref) != null) {
+                int quantity = Scan.askForInt(("Quantity:"));
+                productService.updateStockbyRef(ref, quantity);
+                System.out.println(productService.getProductByRef(ref).toString());
+            } else {
+                System.out.println("The product with ref " + ref + " does not exist.");
+            }
+        }
     }
 
     public double getTotalStoreValue() {
@@ -245,6 +295,11 @@ public class ProductController {
                 .mapToDouble(product -> product.getPrice() * product.getStock())
                 .sum();
         return totalValue;
+    }
+
+    public int getTotalStock() {
+        List<Product> products = productService.getProducts();
+        return products.stream().mapToInt(Product::getStock).sum();
     }
 
     public void showTotalStock() {
@@ -281,6 +336,10 @@ public class ProductController {
     }
 
     public void showStockByRef() {
+        if (getTotalStock() <= 0) {
+            System.out.println("No stock available.");
+            return;
+        }
         String ref = Scan.askForString("Ref: ");
         Product product = productService.getProductByRef(ref);
 
@@ -305,39 +364,6 @@ public class ProductController {
         } else {
             System.out.println("There is no product with this reference.");
         }
-
-    }
-
-
-    private List<Product> loadProducts() {
-
-        Product product1 = new Tree("T001", "Abeto", 23.60, 1.60f);
-        Product product2 = new Tree("T002", "Magnolia", 16.80, 0.30f);
-        Product product3 = new Tree("T003", "Pino", 23.60, 1.60f);
-        Product product4 = new Tree("T004", "Limonero", 16.80, 0.30f);
-        Product product5 = new Tree("T005", "Almendro", 23.60, 1.60f);
-        Product product6 = new Tree("T006", "Manzano", 16.80, 0.30f);
-
-        Product product7 = new Flower("F001", "Rosa", 23.60, "blanco");
-        Product product8 = new Flower("F002", "Rosa", 23.60, "rojo");
-        Product product9 = new Flower("F003", "Rosa", 23.60, "rosa");
-        Product product10 = new Flower("F004", "Margarita", 23.60, "blanca/amarilla");
-        Product product11 = new Flower("F005", "Lirio", 23.60, "blanca");
-        Product product12 = new Flower("F006", "Lirio", 23.60, "amarillo");
-        Product product13 = new Flower("F007", "Amapola", 23.60, "roja");
-        Product product14 = new Flower("F008", "Amapola", 23.60, "amarilla");
-
-        Product product15 = new Decoration("D001", "Enredadera de pared", 20.95, "Madera");
-        Product product16 = new Decoration("D002", "Centro gris", 2.95, "Madera");
-        Product product17 = new Decoration("D003", "Adorno flor", 03.95, "Madera");
-        Product product18 = new Decoration("D004", "Palo", 2.0, "Plastico");
-        Product product19 = new Decoration("D005", "Vaso flor", 4.0, "Madera");
-        Product product20 = new Decoration("D006", "Macetero", 7.0, "Plastico");
-
-        List<Product> products = Arrays.asList(product1, product2, product3, product4, product5, product6, product7, product8, product9, product10,
-                product11, product12, product13, product14, product15, product16, product17, product18, product19, product20);
-
-        return products;
     }
 
 }
