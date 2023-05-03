@@ -5,7 +5,7 @@ import org.flowershop.domain.tickets.Ticket;
 import java.io.IOException;
 import java.util.List;
 
-public interface iTicketRepositoryText {
+public interface ITicketRepository {
 
     public Ticket addTicket(Ticket ticket);
     public Ticket getTicketById(Long id);

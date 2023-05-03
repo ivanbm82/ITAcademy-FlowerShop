@@ -5,8 +5,7 @@ import org.flowershop.domain.products.Flower;
 import org.flowershop.domain.products.Product;
 import org.flowershop.domain.products.Tree;
 
-import org.flowershop.repository.ProductRepositorySQL;
-import org.flowershop.repository.ProductRepositoryTXT;
+import org.flowershop.repository.IProductRepository;
 import org.flowershop.service.ProductService;
 
 import org.flowershop.exceptions.NegativeValueException;
@@ -15,23 +14,33 @@ import org.flowershop.utils.Scan.Scan;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+
 public class ProductController {
+    private static ProductController instance;
     ProductService productService;
     MenuProducts menuProducts;
     DecimalFormat df;
 
-    public ProductController() {
-        productService = new ProductService( new ProductRepositoryTXT());
+
+    private ProductController(IProductRepository repository) {
+        productService = ProductService.getInstance(repository);
+
 /*
         productService = new ProductService(
-                new ProductRepositorySQL("jdbc:mysql://root:Ozs9AVywm8d9r6mAI2lo@containers-us-west-131.railway.app:6126/railway","root","Ozs9AVywm8d9r6mAI2lo")
+                new ProductRepositorySQL("jdbc:mysql://root:m6yqhKG0QAHKIfEceA2z@containers-us-west-142.railway.app:7013/railway","root","m6yqhKG0QAHKIfEceA2z")
         );
 */
         menuProducts = new MenuProducts();
         df = new DecimalFormat("#.##");
+    }
+
+    public static ProductController getInstance(IProductRepository repository) {
+        if (instance == null) {
+            instance = new ProductController(repository);
+        }
+        return instance;
     }
 
 

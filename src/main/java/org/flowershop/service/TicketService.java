@@ -2,18 +2,28 @@ package org.flowershop.service;
 
 
 import org.flowershop.domain.tickets.Ticket;
+import org.flowershop.repository.IProductRepository;
 import org.flowershop.repository.TicketRepositoryTXT;
+import org.flowershop.repository.ITicketRepository;
 
 import java.io.IOException;
 import java.util.List;
 
 public class TicketService {
+    private static TicketService instance;
+    private final ITicketRepository repository;
 
-    private final TicketRepositoryTXT ticketRepositoryTXT;
-
-    public TicketService(TicketRepositoryTXT ticketRepositoryTXT) {
-        this.ticketRepositoryTXT = ticketRepositoryTXT;
+    private TicketService(ITicketRepository repository) {
+        this.repository = repository;
     }
+
+    public static TicketService getInstance(ITicketRepository repository) {
+        if (instance == null) {
+            instance = new TicketService(repository);
+        }
+        return instance;
+    }
+
 
     /**
      *
@@ -22,7 +32,7 @@ public class TicketService {
      * @throws IOException
      */
     public Ticket addTicket(Ticket ticket) throws IOException {
-        ticketRepositoryTXT.addTicket(ticket);
+        repository.addTicket(ticket);
         return ticket;
     }
 
@@ -31,7 +41,7 @@ public class TicketService {
      * @return all of tickets in de file
      */
     public List<Ticket> getAllTickets() {
-        List<Ticket> tickets = ticketRepositoryTXT.getAllTickets();
+        List<Ticket> tickets = repository.getAllTickets();
         return tickets;
     }
 
@@ -42,7 +52,7 @@ public class TicketService {
      */
     public Ticket getTicketById(long id) {
 
-        return ticketRepositoryTXT.getTicketById(id);
+        return repository.getTicketById(id);
     }
 
     /**
@@ -50,7 +60,7 @@ public class TicketService {
      * @return the last ID
      */
     public Long getLastTicketId() {
-        return ticketRepositoryTXT.getLastTicketId();
+        return repository.getLastTicketId();
     }
 
     /**
@@ -60,6 +70,6 @@ public class TicketService {
      * @throws IOException
      */
     public Ticket removeTicketById(long id) throws IOException {
-        return ticketRepositoryTXT.removeTicketById(id);
+        return repository.removeTicketById(id);
     }
 }
