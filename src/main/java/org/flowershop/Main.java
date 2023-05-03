@@ -4,6 +4,7 @@ import org.flowershop.controller.FlowerShopController;
 import org.flowershop.domain.flowerShop.FlowerShop;
 import org.flowershop.utils.Scan.Scan;
 
+import java.io.IOException;
 import java.util.List;
 
 public class Main {
