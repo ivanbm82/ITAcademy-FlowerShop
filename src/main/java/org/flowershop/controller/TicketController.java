@@ -9,7 +9,6 @@ import org.flowershop.service.ProductService;
 import org.flowershop.service.TicketService;
 
 import org.flowershop.utils.MenuTickets;
-import org.flowershop.utils.Scan.Scan;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,7 +30,7 @@ public class TicketController {
 
     public TicketController() {
         properties = new Properties();
-        productService = new ProductService( new ProductRepositoryTXT());
+        productService = new ProductService(new ProductRepositoryTXT());
         String directoryProgram = System.getProperty("user.dir");
         String configFile = directoryProgram + "\\src\\main\\resources\\config.properties";
         try {
@@ -46,55 +45,26 @@ public class TicketController {
     }
 
 
-    public void ticketDataRequest() {
+    public void ticketDataRequest() throws IOException {
         List<Product> products = productService.getProducts();
         List<TicketDetail> ticketDetails = new ArrayList<>();
-        Boolean exit = false;
 
-        try {
-            do {
-                try {
-                    int option = MenuTickets.showOption("Tickets");
-                    System.out.println(option);
-                    switch (option) {
-                        case 1:
-                            System.out.println("option product");
-                            //TODO Adding new product in ticket
-                            addProductInTicketDetail(products, ticketDetails);
-                            break;
-                        case 2:
-                            //TODO Modify Quantity from a ticketDetail
-                            modifyQuantityInTicketDetail(ticketDetails);
-                            break;
-                        case 3:
-                            //TODO Deleting productDetail from a ticket
-                            removeProductInTicketDetail(ticketDetails);
-                            break;
-                        case 4:
-                            //TODO Print all ticketDetail
-                            showProductsInTicket(ticketDetails);
-                            Scan.askForString("Press enter to continue...");
-                            break;
-                        case 5:
-                            //TODO Save Ticket
-                            saveTicket(ticketService, ticketDetails);
-                            break;
-                        case 6:
-                            ticketDetails.clear();
-                            exit = true;
-                            break;
-                        default:
-                            System.out.println("Incorrect option");
-                            break;
-                    }
-                } catch (Exception e) {
-                    System.out.println("Incorrect option");
-                }
+        boolean exit = false;
+        int option;
 
-            } while (!exit);
-        } catch (Exception e) {
-            System.out.println("Bye!!!");
-        }
+        do {
+            option = MenuTickets.showOption("Tickets");
+            switch (option) {
+                case 0 -> {ticketDetails.clear(); exit = true;}
+                case 1 -> addProductInTicketDetail(products, ticketDetails);
+                case 2 -> updateQuantityInTicketDetail(ticketDetails);
+                case 3 -> removeProductInTicketDetail(ticketDetails);
+                case 4 -> showProductsInTicket(ticketDetails);
+                case 5 -> saveTicket(ticketService, ticketDetails);
+                default -> System.out.println("Choose an option.");
+            }
+            System.out.println();
+        } while(!exit);
 
     }
 
@@ -113,6 +83,10 @@ public class TicketController {
         Double total = ticketDetails.stream().mapToDouble(TicketDetail::getAmount).sum();
         Ticket ticket = new Ticket(ticketService.getLastTicketId(), new Date(), 1L, total, true);
         ticketDetails.stream().forEach(ticket::addTicketDetail);
+        ticketDetails.stream().forEach(td -> {
+                                                ticket.addTicketDetail(td);
+                                                productService.updateStockbyRef(td.getRef(), td.getQuantity() * -1);
+                                            });
 
         ticketService.addTicket(ticket);
         System.out.println(ticket);
@@ -120,7 +94,7 @@ public class TicketController {
         ticketDetails.clear();
     }
 
-    private List<TicketDetail> modifyQuantityInTicketDetail(List<TicketDetail> ticketDetails) {
+    private List<TicketDetail> updateQuantityInTicketDetail(List<TicketDetail> ticketDetails) {
 
         if (ticketDetails.size() > 0) {
             System.out.println("Update Product in TicketDetail ...\n");
@@ -133,9 +107,18 @@ public class TicketController {
             if (findTicketDetail.isPresent()) {
                 Integer quantity = askForInt("Input new quantity");
 
-                findTicketDetail.get().setQuantity(quantity);
-                findTicketDetail.get().setAmount(quantity * findTicketDetail.get().getPrice());
-                System.out.println(findTicketDetail);
+                Product findProduct = productService.getProductByRef(findTicketDetail.get().getRef());
+
+                if (findProduct.getStock() >= quantity) {
+
+                    findTicketDetail.get().setQuantity(quantity);
+                    findTicketDetail.get().setAmount(quantity * findTicketDetail.get().getPrice());
+                    System.out.println(findTicketDetail);
+
+                } else System.out.println("Available stock: " + findProduct.getStock());
+
+
+
             } else System.out.println("This product isn't in the ticket");
         } else System.out.println("There aren't products in ticket");
         return ticketDetails;
@@ -168,7 +151,8 @@ public class TicketController {
 
     }
 
-    private List<TicketDetail> addProductInTicketDetail(List<Product> products, List<TicketDetail> ticketDetails) {
+    private List<TicketDetail> addProductInTicketDetail
+            (List<Product> products, List<TicketDetail> ticketDetails) {
         System.out.println("Add Product in Order ...\n");
         showObjectList(products);
         String reference = askForString("Input product reference");
@@ -185,11 +169,14 @@ public class TicketController {
                 System.out.println("Product already exists in the ticket");
             } else {
                 Integer quantity = askForInt("Input quantity");
-                TicketDetail newTicketDetail = new TicketDetail(findProduct.get().getId(), findProduct.get().getRef(),
-                        quantity, findProduct.get().getPrice(), quantity * findProduct.get().getPrice());
-                ticketDetails.add(newTicketDetail);
+                //TODO Check if there are enough stock
+                if (findProduct.get().getStock() >= quantity) {
+                    TicketDetail newTicketDetail = new TicketDetail(findProduct.get().getId(), findProduct.get().getRef(),
+                            quantity, findProduct.get().getPrice(), quantity * findProduct.get().getPrice());
+                    ticketDetails.add(newTicketDetail);
 
-                System.out.println(newTicketDetail);
+                    System.out.println(newTicketDetail);
+                } else System.out.println("Available stock: " + findProduct.get().getStock());
             }
         }
         return ticketDetails;
@@ -199,10 +186,6 @@ public class TicketController {
     public void showObjectList(List<?> list) {
         list.stream().forEach(System.out::println);
 
-    }
-
-    private List<Product> loadProducts(ProductService productService) {
-        return productService.getProducts();
     }
 
 }

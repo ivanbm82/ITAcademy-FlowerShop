@@ -7,6 +7,7 @@ import org.flowershop.service.FlowerShopService;
 import org.flowershop.utils.MenuFlowerShop;
 import org.flowershop.utils.Scan.Scan;
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -23,7 +24,7 @@ public class FlowerShopController {
     }
 
 
-    public void flowerShopHandleRequest() {
+    public void flowerShopHandleRequest() throws IOException {
         MenuFlowerShop flowerShopMenu = new MenuFlowerShop();
         boolean exit = false;
         int option;

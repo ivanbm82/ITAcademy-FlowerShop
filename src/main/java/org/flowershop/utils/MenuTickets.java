@@ -17,7 +17,7 @@ public class MenuTickets {
         cad += "\n3.Delete Product";
         cad += "\n4.Review Ticket";
         cad += "\n5.End Ticket and save";
-        cad += "\n6.Exit (discard all changes)";
+        cad += "\n0.Exit (discard all changes of ticket)";
         int option = Scan.askForInt(cad);
         return option;
     }

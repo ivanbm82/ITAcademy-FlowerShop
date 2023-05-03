@@ -4,11 +4,12 @@ import org.flowershop.controller.FlowerShopController;
 import org.flowershop.domain.flowerShop.FlowerShop;
 import org.flowershop.utils.Scan.Scan;
 
+import java.io.IOException;
 import java.util.List;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         FlowerShopController flowerShopController = new FlowerShopController();
         List<FlowerShop> flowerShops = flowerShopController.load();
         String flowerShopName;
