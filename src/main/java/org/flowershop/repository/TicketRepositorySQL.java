@@ -3,12 +3,11 @@ package org.flowershop.repository;
 import org.flowershop.domain.tickets.Ticket;
 import org.flowershop.domain.tickets.TicketDetail;
 
-import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TicketRepositorySQL implements iTicketRepositoryText {
+public class TicketRepositorySQL implements ITicketRepository {
     private final Connection connection;
 
     public TicketRepositorySQL(String url, String user, String password) {

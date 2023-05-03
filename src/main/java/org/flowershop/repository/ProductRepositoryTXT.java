@@ -17,6 +17,7 @@ import org.flowershop.domain.products.Tree;
 
 
 public class ProductRepositoryTXT implements IProductRepository {
+    private static ProductRepositoryTXT instance;
     private final Properties properties;
     private static String fileName;
     File file;
@@ -24,7 +25,7 @@ public class ProductRepositoryTXT implements IProductRepository {
     private List<Product> products;
 
 
-    public ProductRepositoryTXT() {
+    private ProductRepositoryTXT() {
         properties = new Properties();
 
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("config.properties")) {
@@ -49,6 +50,14 @@ public class ProductRepositoryTXT implements IProductRepository {
         loadProducts();
         Product.setLastId(products.size());
     }
+
+    public static ProductRepositoryTXT getInstance() {
+        if (instance == null) {
+            instance = new ProductRepositoryTXT();
+        }
+        return instance;
+    }
+
 
     /**
      * This method saves the list of products to a file.

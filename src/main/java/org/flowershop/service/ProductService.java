@@ -2,18 +2,27 @@ package org.flowershop.service;
 
 import org.flowershop.domain.products.Product;
 import org.flowershop.exceptions.NegativeValueException;
+import org.flowershop.repository.IFlowerShopRepository;
 import org.flowershop.repository.IProductRepository;
 
 import java.util.List;
 
 
 public class ProductService {
+    private static ProductService instance;
     private final IProductRepository repository;
 
 
     // This method gets the repository by injection dependencies.
-    public ProductService(IProductRepository repository) {
+    private ProductService(IProductRepository repository) {
         this.repository = repository;
+    }
+
+    public static ProductService getInstance(IProductRepository repository) {
+        if (instance == null) {
+            instance = new ProductService(repository);
+        }
+        return instance;
     }
 
 
