@@ -45,7 +45,7 @@ public class TicketController {
     }
 
 
-    public void ticketDataRequest() throws IOException {
+    public void ticketDataRequest() {
         List<Product> products = productService.getProducts();
         List<TicketDetail> ticketDetails = new ArrayList<>();
 
@@ -79,7 +79,7 @@ public class TicketController {
         System.out.println("Total ticket: " + df.format(total));
     }
 
-    private void saveTicket(TicketService ticketService, List<TicketDetail> ticketDetails) throws IOException {
+    private void saveTicket(TicketService ticketService, List<TicketDetail> ticketDetails) {
         Double total = ticketDetails.stream().mapToDouble(TicketDetail::getAmount).sum();
         Ticket ticket = new Ticket(ticketService.getLastTicketId(), new Date(), 1L, total, true);
         ticketDetails.stream().forEach(ticket::addTicketDetail);
@@ -88,7 +88,11 @@ public class TicketController {
                                                 productService.updateStockbyRef(td.getRef(), td.getQuantity() * -1);
                                             });
 
-        ticketService.addTicket(ticket);
+        try {
+            ticketService.addTicket(ticket);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         System.out.println(ticket);
 
         ticketDetails.clear();

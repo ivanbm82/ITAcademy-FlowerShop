@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         FlowerShopController flowerShopController = new FlowerShopController();
         List<FlowerShop> flowerShops = flowerShopController.load();
         String flowerShopName;

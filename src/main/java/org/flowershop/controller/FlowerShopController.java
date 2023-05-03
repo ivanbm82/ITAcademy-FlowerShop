@@ -24,7 +24,7 @@ public class FlowerShopController {
     }
 
 
-    public void flowerShopHandleRequest() throws IOException {
+    public void flowerShopHandleRequest() {
         MenuFlowerShop flowerShopMenu = new MenuFlowerShop();
         boolean exit = false;
         int option;
