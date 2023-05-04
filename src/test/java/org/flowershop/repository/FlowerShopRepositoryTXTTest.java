@@ -16,16 +16,15 @@ public class FlowerShopRepositoryTXTTest {
 
     @BeforeEach
     public void setUp() {
-        String fileFlowerShops = "flowerShops.txt";
-        repository = new FlowerShopRepositoryTXT(fileFlowerShops);
+        repository = FlowerShopRepositoryTXT.getInstance();
         repository.loadFlowerShops();
     }
 
     @Test
     public void saveFlowerShops() {
         // arrange
-        FlowerShop shop1 = new FlowerShop("F001", "MyFlowerShop1");
-        FlowerShop shop2 = new FlowerShop("F002", "MyFlowerShop2");
+        FlowerShop shop1 = new FlowerShop("MyFlowerShop");
+        FlowerShop shop2 = new FlowerShop("MyFlowerShop2");
         List<FlowerShop> flowerShops = Arrays.asList(shop1, shop2);
         // act
         flowerShops.forEach( repository::addFlowerShop );
@@ -44,23 +43,11 @@ public class FlowerShopRepositoryTXTTest {
     @Test
     public void addFlowerShop() {
         // arrange
-        FlowerShop shop = new FlowerShop("F003", "MyFlorist3");
+        FlowerShop shop = new FlowerShop("MyFlorist3");
         // act
         repository.addFlowerShop(shop);
         // assert
         assertTrue(repository.getAllFlowerShops().contains(shop));
-    }
-
-    @Test
-    public void getFlowerShopById() {
-        repository.getFlowerShopById(1L);
-        assertEquals("F002", repository.getFlowerShopById(2L).getRef());
-    }
-
-    @Test
-    public void getFlowerShopByRef() {
-        repository.getFlowerShopByRef("F002");
-        assertEquals("F002", repository.getFlowerShopByRef("F002").getRef());
     }
 
     @Test
@@ -75,14 +62,5 @@ public class FlowerShopRepositoryTXTTest {
         assertEquals(3, repository.getAllFlowerShops().size());
     }
 
-    @Test
-    public void updateFlowerShop() {
-        FlowerShop shop = repository.getFlowerShopByRef("F003");
-
-        // act
-        repository.updateFlowerShop(shop, "F003", "MyFlowerShop3");
-        // assert
-        assertEquals("MyFlowerShop3", repository.getFlowerShopByName("MyFlowerShop3").getName());
-    }
 
 }

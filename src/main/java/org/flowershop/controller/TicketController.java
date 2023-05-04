@@ -3,16 +3,12 @@ package org.flowershop.controller;
 import org.flowershop.domain.products.Product;
 import org.flowershop.domain.tickets.Ticket;
 import org.flowershop.domain.tickets.TicketDetail;
-import org.flowershop.repository.ProductRepositoryTXT;
-import org.flowershop.repository.TicketRepositoryTXT;
+import org.flowershop.repository.IProductRepository;
+import org.flowershop.repository.ITicketRepository;
 import org.flowershop.service.ProductService;
 import org.flowershop.service.TicketService;
-
 import org.flowershop.utils.MenuTickets;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -22,26 +18,22 @@ import static org.flowershop.utils.Scan.Scan.askForString;
 
 
 public class TicketController {
-    Properties properties;
+    private static TicketController instance;
     ProductService productService;
     TicketService ticketService;
-    String fileTicket;
 
 
-    public TicketController() {
-        properties = new Properties();
-        productService = new ProductService(new ProductRepositoryTXT());
-        String directoryProgram = System.getProperty("user.dir");
-        String configFile = directoryProgram + "\\src\\main\\resources\\config.properties";
-        try {
-            properties.load(new FileInputStream(new File(configFile)));
-            fileTicket = directoryProgram + "\\" + (String) properties.get("fileTicket");
-            ticketService = new TicketService(new TicketRepositoryTXT(fileTicket));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+    private TicketController(IProductRepository productRepository, ITicketRepository ticketRepository) {
+        productService = ProductService.getInstance(productRepository);
+        ticketService = TicketService.getInstance(ticketRepository);
+    }
+
+
+    public static TicketController getInstance(IProductRepository productRepository, ITicketRepository ticketRepository) {
+        if (instance == null) {
+            instance = new TicketController(productRepository, ticketRepository);
         }
+        return instance;
     }
 
 
@@ -82,6 +74,7 @@ public class TicketController {
     private void saveTicket(TicketService ticketService, List<TicketDetail> ticketDetails) {
         Double total = ticketDetails.stream().mapToDouble(TicketDetail::getAmount).sum();
         Ticket ticket = new Ticket(ticketService.getLastTicketId(), new Date(), 1L, total, true);
+
         ticketDetails.stream().forEach(td -> {
                                                 ticket.addTicketDetail(td);
                                                 productService.updateStockbyRef(td.getRef(), td.getQuantity() * -1);
@@ -187,7 +180,7 @@ public class TicketController {
     }
 
     public void showObjectList(List<?> list) {
-        list.stream().forEach(System.out::println);
+        list.forEach(System.out::println);
 
     }
 

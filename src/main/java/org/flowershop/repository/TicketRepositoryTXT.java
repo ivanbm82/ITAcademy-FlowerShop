@@ -5,19 +5,27 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.flowershop.domain.tickets.Ticket;
 
 import java.io.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
-public class TicketRepositoryTXT implements iTicketRepositoryText {
-
+public class TicketRepositoryTXT implements ITicketRepository {
+    private static TicketRepositoryTXT instance;
+    private Properties properties;
     private String fileTicket;
     private File file;
 
-    public TicketRepositoryTXT(String fileTicket) {
-        this.fileTicket = fileTicket;
+    private TicketRepositoryTXT() {
+        properties = new Properties();
+
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("config.properties")) {
+            properties.load(inputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        fileTicket = properties.getProperty("fileTicket");
+
         file = new File(fileTicket);
         if (!file.exists()) {
             file.getParentFile().mkdirs(); // Create directory if not exists
@@ -27,7 +35,16 @@ public class TicketRepositoryTXT implements iTicketRepositoryText {
                 throw new RuntimeException(e);
             }
         }
+
     }
+
+    public static TicketRepositoryTXT getInstance() {
+        if (instance == null) {
+            instance = new TicketRepositoryTXT();
+        }
+        return instance;
+    }
+    
 
     public String getFileTicket() {
         return fileTicket;
@@ -71,7 +88,7 @@ public class TicketRepositoryTXT implements iTicketRepositoryText {
         FileReader fr = null;
         BufferedReader br = null;
         String file1 = this.getFileTicket();
-        ;
+
         Boolean encontrado = false;
 
         try {
@@ -146,7 +163,7 @@ public class TicketRepositoryTXT implements iTicketRepositoryText {
     }
 
     @Override
-    public Long getLastTicketId() {
+    public Long getNewTicketId() {
         Long lastId = 0L;
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -155,7 +172,6 @@ public class TicketRepositoryTXT implements iTicketRepositoryText {
         FileReader fr = null;
         BufferedReader br = null;
         String file1 = this.getFileTicket();
-        ;
 
         try {
             file = new File(file1);
@@ -168,8 +184,7 @@ public class TicketRepositoryTXT implements iTicketRepositoryText {
                     ticket = objectMapper.readValue(linea, Ticket.class);
                     if (ticket.getId() > lastId) lastId = ticket.getId();
                 }
-                return lastId;
-
+                return lastId+1;
             }
         } catch (Exception e) {
             e.printStackTrace();

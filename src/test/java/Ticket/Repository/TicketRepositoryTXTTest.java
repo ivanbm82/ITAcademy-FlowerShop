@@ -21,9 +21,7 @@ public class TicketRepositoryTXTTest {
 
     @BeforeEach
     void SetUp() {
-
-        String fileTicket = "C:\\Users\\Susana\\Documents\\GitHub\\ProjectsITACADEMY\\S3\\03\\ITAcademy-FlowerShop\\ticket.txt";
-        ticketRepositoryTXT = new TicketRepositoryTXT(fileTicket);
+        ticketRepositoryTXT = TicketRepositoryTXT.getInstance();
     }
 
     @DisplayName("Adding new Ticket")
