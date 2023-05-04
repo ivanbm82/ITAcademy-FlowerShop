@@ -75,7 +75,6 @@ public class TicketController {
         Double total = ticketDetails.stream().mapToDouble(TicketDetail::getAmount).sum();
         Ticket ticket = new Ticket(ticketService.getLastTicketId(), new Date(), 1L, total, true);
 
-        ticketDetails.stream().forEach(ticket::addTicketDetail);
         ticketDetails.stream().forEach(td -> {
                                                 ticket.addTicketDetail(td);
                                                 productService.updateStockbyRef(td.getRef(), td.getQuantity() * -1);
