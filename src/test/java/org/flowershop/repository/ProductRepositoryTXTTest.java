@@ -19,20 +19,10 @@ public class ProductRepositoryTXTTest {
 
     @BeforeEach
     void setUp() {
-        String fileProduct = "";
-        productRepository = new ProductRepositoryTXT(fileProduct);
+        productRepository = ProductRepositoryTXT.getInstance();
         productRepository.loadProducts();
     }
 
-/*
-    @AfterEach
-    void close() throws IOException{
-        // Finally delete temp file after the test
-        if (file.exists()) {
-
-        }
-    }
-*/
 
     @Test
     public void saveProducts() {

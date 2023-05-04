@@ -6,14 +6,21 @@ import org.flowershop.repository.IFlowerShopRepository;
 import java.util.List;
 
 public class FlowerShopService {
-    private IFlowerShopRepository repository;
+    private static FlowerShopService instance;
+    private final IFlowerShopRepository repository;
 
 
     // This method gets the repository by injection dependencies.
-    public FlowerShopService(IFlowerShopRepository repository) {
+    private FlowerShopService(IFlowerShopRepository repository) {
         this.repository = repository;
     }
 
+    public static FlowerShopService getInstance(IFlowerShopRepository repository) {
+        if (instance == null) {
+            instance = new FlowerShopService(repository);
+        }
+        return instance;
+    }
 
     // Methods
     public void addFlowerShop(FlowerShop flowerShop) {

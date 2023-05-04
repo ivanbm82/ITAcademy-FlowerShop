@@ -2,6 +2,7 @@ package org.flowershop.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.flowershop.domain.flowerShop.FlowerShop;
+import org.flowershop.service.FlowerShopService;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.Properties;
 
 
 public class FlowerShopRepositoryTXT implements IFlowerShopRepository {
+    private static FlowerShopRepositoryTXT instance;
     private Properties properties;
     private String fileName;
     File file;
@@ -18,7 +20,7 @@ public class FlowerShopRepositoryTXT implements IFlowerShopRepository {
     private List<FlowerShop> flowerShops;
 
 
-    public FlowerShopRepositoryTXT() {
+    private FlowerShopRepositoryTXT() {
         properties = new Properties();
 
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("config.properties")) {
@@ -41,6 +43,15 @@ public class FlowerShopRepositoryTXT implements IFlowerShopRepository {
 
         loadFlowerShops();
     }
+
+
+    public static FlowerShopRepositoryTXT getInstance() {
+        if (instance == null) {
+            instance = new FlowerShopRepositoryTXT();
+        }
+        return instance;
+    }
+
 
     /**
      * Add new flower shop.

@@ -8,19 +8,35 @@ import org.flowershop.domain.products.Tree;
 import org.flowershop.exceptions.NegativeValueException;
 import org.flowershop.utils.Scan.Scan;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Scanner;
 
 public class ProductRepositorySQL implements IProductRepository {
     private final Connection connection;
+    private final Properties properties;
+    private String uri;
+    private String user;
+    private String password;
 
-    public ProductRepositorySQL(String url, String user, String password) {
+    public ProductRepositorySQL() {
+        properties = new Properties();
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("config.properties")) {
+            properties.load(inputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        uri = properties.getProperty("uri_sql");
+        user = properties.getProperty("user");
+        password = properties.getProperty("pass");
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            connection = DriverManager.getConnection(url, user, password);
+            connection = DriverManager.getConnection(uri, user, password);
         } catch (ClassNotFoundException ex) {
             System.out.println("Error al registrar el driver de MySQL: " + ex);
             throw new RuntimeException(ex);
