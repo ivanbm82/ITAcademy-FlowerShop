@@ -163,7 +163,7 @@ public class TicketRepositoryTXT implements ITicketRepository {
     }
 
     @Override
-    public Long getLastTicketId() {
+    public Long getNewTicketId() {
         Long lastId = 0L;
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -184,8 +184,7 @@ public class TicketRepositoryTXT implements ITicketRepository {
                     ticket = objectMapper.readValue(linea, Ticket.class);
                     if (ticket.getId() > lastId) lastId = ticket.getId();
                 }
-                return lastId;
-
+                return lastId+1;
             }
         } catch (Exception e) {
             e.printStackTrace();

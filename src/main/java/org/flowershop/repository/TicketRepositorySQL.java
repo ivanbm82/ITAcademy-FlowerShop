@@ -50,8 +50,8 @@ public class TicketRepositorySQL implements ITicketRepository {
             statement.setLong(2, ticket.getClient());
             statement.setDouble(3, ticket.getAmount());
             statement.setBoolean(4, ticket.getFinished());
-
             statement.executeUpdate();
+
             ResultSet resultSet = statement.getGeneratedKeys();
             resultSet.next();
             long id = resultSet.getLong(1);
@@ -159,7 +159,7 @@ public class TicketRepositorySQL implements ITicketRepository {
     }
 
     @Override
-    public Long getLastTicketId() {
+    public Long getNewTicketId() {
         return null;
     }
 

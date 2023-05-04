@@ -19,18 +19,22 @@ public class FlowerShopController {
 
     public FlowerShopController() {
         // TXT
-        //flowerShopService = FlowerShopService.getInstance(FlowerShopRepositoryTXT.getInstance());
-        //productController = ProductController.getInstance(ProductRepositoryTXT.getInstance());
-        //ticketController = TicketController.getInstance(ProductRepositoryTXT.getInstance(),
-        //                                                TicketRepositoryTXT.getInstance());
+        
+        flowerShopService = FlowerShopService.getInstance(FlowerShopRepositoryTXT.getInstance());
+        productController = ProductController.getInstance(ProductRepositoryTXT.getInstance());
+        ticketController = TicketController.getInstance(ProductRepositoryTXT.getInstance(),
+                                                        TicketRepositoryTXT.getInstance());
+
 
         // SQL
+        /*
         ProductRepositorySQL productRepositorySQL = new ProductRepositorySQL();
         TicketRepositorySQL ticketRepositorySQL = new TicketRepositorySQL();
         flowerShopService = FlowerShopService.getInstance( new FlowerShopRepositorySQL() );
         productController = ProductController.getInstance( new ProductRepositorySQL() );
         ticketController = TicketController.getInstance( productRepositorySQL,
                 ticketRepositorySQL);
+        */
     }
 
 

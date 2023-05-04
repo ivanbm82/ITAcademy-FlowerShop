@@ -20,7 +20,6 @@ public class Ticket implements Serializable {
     private List<TicketDetail> ticketDetailList;
 
     public Ticket(Long id, Date date, Long client, Double amount, Boolean finished) {
-        //this.id = ++id;
         this.id = id;
         this.date = date;
         this.client = client;

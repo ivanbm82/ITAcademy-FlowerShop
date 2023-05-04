@@ -10,6 +10,6 @@ public interface ITicketRepository {
     public Ticket addTicket(Ticket ticket);
     public Ticket getTicketById(Long id);
     public List<Ticket> getAllTickets();
-    public Long getLastTicketId();
+    public Long getNewTicketId();
     public Ticket removeTicketById(long id) throws IOException;
 }

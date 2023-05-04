@@ -2,8 +2,6 @@ package org.flowershop.service;
 
 
 import org.flowershop.domain.tickets.Ticket;
-import org.flowershop.repository.IProductRepository;
-import org.flowershop.repository.TicketRepositoryTXT;
 import org.flowershop.repository.ITicketRepository;
 
 import java.io.IOException;
@@ -60,7 +58,7 @@ public class TicketService {
      * @return the last ID
      */
     public Long getLastTicketId() {
-        return repository.getLastTicketId();
+        return repository.getNewTicketId();
     }
 
     /**
