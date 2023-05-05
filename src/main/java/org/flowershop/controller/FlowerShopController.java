@@ -2,6 +2,9 @@ package org.flowershop.controller;
 
 import org.flowershop.domain.flowerShop.FlowerShop;
 import org.flowershop.domain.tickets.Ticket;
+import org.flowershop.repository.repositorySQL.FlowerShopRepositorySQL;
+import org.flowershop.repository.repositorySQL.ProductRepositorySQL;
+import org.flowershop.repository.repositorySQL.TicketRepositorySQL;
 import org.flowershop.repository.repositoryTXT.FlowerShopRepositoryTXT;
 import org.flowershop.repository.repositoryTXT.ProductRepositoryTXT;
 import org.flowershop.repository.repositoryTXT.TicketRepositoryTXT;
@@ -13,27 +16,37 @@ import java.util.List;
 
 
 public class FlowerShopController {
-    private final FlowerShopService flowerShopService;
-    private final ProductController productController;
-    private final TicketController ticketController;
+    private FlowerShopService flowerShopService;
+    private ProductController productController;
+    private TicketController ticketController;
 
 
-    public FlowerShopController() {
-        // TXT
-        flowerShopService = FlowerShopService.getInstance(FlowerShopRepositoryTXT.getInstance());
-        productController = ProductController.getInstance(ProductRepositoryTXT.getInstance());
-        ticketController = TicketController.getInstance(ProductRepositoryTXT.getInstance(),
-                                                        TicketRepositoryTXT.getInstance());
+    public FlowerShopController(int typePersistence) {
 
-        // SQL
-        /*
-        ProductRepositorySQL productRepositorySQL = new ProductRepositorySQL();
-        TicketRepositorySQL ticketRepositorySQL = new TicketRepositorySQL();
-        flowerShopService = FlowerShopService.getInstance( new FlowerShopRepositorySQL() );
-        productController = ProductController.getInstance( new ProductRepositorySQL() );
-        ticketController = TicketController.getInstance( productRepositorySQL,
-                ticketRepositorySQL);
-        */
+        // Select the type of persistence.
+        switch (typePersistence) {
+            case 1: // TXT
+                flowerShopService = FlowerShopService.getInstance(FlowerShopRepositoryTXT.getInstance());
+                productController = ProductController.getInstance(ProductRepositoryTXT.getInstance());
+                ticketController = TicketController.getInstance(ProductRepositoryTXT.getInstance(),
+                        TicketRepositoryTXT.getInstance());
+                break;
+            case 2: // MYSQL
+                ProductRepositorySQL productRepositorySQL = new ProductRepositorySQL();
+                TicketRepositorySQL ticketRepositorySQL = new TicketRepositorySQL();
+                flowerShopService = FlowerShopService.getInstance( new FlowerShopRepositorySQL() );
+                productController = ProductController.getInstance( new ProductRepositorySQL() );
+                ticketController = TicketController.getInstance( productRepositorySQL,
+                        ticketRepositorySQL);
+                break;
+            case 3: // MONGODB
+                // TODO: MongoDB persistence
+                System.out.println("Not implemented yet");
+                break;
+            default:
+                System.out.println("No correct persistence option.");
+                break;
+        }
 
     }
 
