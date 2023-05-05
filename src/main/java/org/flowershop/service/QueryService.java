@@ -1,6 +1,6 @@
 package org.flowershop.service;
 
-import org.flowershop.Ticket;
+import org.flowershop.utils.UtilsQueryTicket;
 import org.flowershop.domain.products.Product;
 
 import java.time.LocalDate;
@@ -22,24 +22,24 @@ public class QueryService {
                 .sum();
     }
 
-    public List<Ticket> getSalesByDateRange(List<Ticket> tickets) {
+    public List<UtilsQueryTicket> getSalesByDateRange(List<UtilsQueryTicket> utilsQueryTickets) {
 
         LocalDate[] dates = getStartDateAndEndDate();
         LocalDate startDate = dates[0];
         LocalDate endDate = dates[1];
 
-        return tickets.stream()
-                .filter(ticket -> ticket.getDate().isAfter(startDate) && ticket.getDate().isBefore(endDate))
+        return utilsQueryTickets.stream()
+                .filter(utilsQueryTicket -> utilsQueryTicket.getDate().isAfter(startDate) && utilsQueryTicket.getDate().isBefore(endDate))
                 .collect(Collectors.toList());
     }
-    public double getTotalProfitByDateRange(List<Ticket> tickets) {
+    public double getTotalProfitByDateRange(List<UtilsQueryTicket> utilsQueryTickets) {
 
         LocalDate[] dates = getStartDateAndEndDate();
         LocalDate startDate = dates[0];
         LocalDate endDate = dates[1];
 
-        return getSalesByDateRange(tickets).stream()
-                .mapToDouble(Ticket::getTotalPrice)
+        return getSalesByDateRange(utilsQueryTickets).stream()
+                .mapToDouble(UtilsQueryTicket::getTotalPrice)
                 .sum();
     }
     public static LocalDate[] getStartDateAndEndDate() {

@@ -1,8 +1,8 @@
-package org.flowershop.repository;
+package org.flowershop.repository.repositoryTXT;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.flowershop.domain.flowerShop.FlowerShop;
-import org.flowershop.service.FlowerShopService;
+import org.flowershop.repository.IFlowerShopRepository;
 
 import java.io.*;
 import java.util.ArrayList;

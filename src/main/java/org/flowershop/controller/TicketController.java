@@ -7,7 +7,7 @@ import org.flowershop.repository.IProductRepository;
 import org.flowershop.repository.ITicketRepository;
 import org.flowershop.service.ProductService;
 import org.flowershop.service.TicketService;
-import org.flowershop.utils.MenuTickets;
+import org.flowershop.utils.menu.MenuTickets;
 
 import java.io.IOException;
 import java.text.DecimalFormat;

@@ -1,7 +1,8 @@
-package org.flowershop.repository;
+package org.flowershop.repository.repositorySQL;
 
 import org.flowershop.controller.FlowerShopController;
 import org.flowershop.domain.flowerShop.FlowerShop;
+import org.flowershop.repository.IFlowerShopRepository;
 
 import java.io.IOException;
 import java.io.InputStream;
