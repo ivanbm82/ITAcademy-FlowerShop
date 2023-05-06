@@ -1,4 +1,4 @@
-package org.flowershop.repository;
+package org.flowershop.repository.repositoryTXT;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -14,6 +14,7 @@ import java.util.Properties;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.flowershop.domain.products.Tree;
+import org.flowershop.repository.IProductRepository;
 
 
 public class ProductRepositoryTXT implements IProductRepository {

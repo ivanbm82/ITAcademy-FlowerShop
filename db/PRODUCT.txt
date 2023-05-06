@@ -1,6 +1,0 @@
-<<<<<<< HEAD
-{"productType":"tree","id":1,"name":"LIMONERO","ref":"T001","price":152.1,"stock":40,"height":2.0}
-=======
-{"productType":"tree","id":1,"name":"LIMONERO","ref":"T001","price":152.1,"stock":32,"height":2.0}
->>>>>>> 99be4e5e2751b3cb3f43ca5659e38dae25d0f3cf
-{"productType":"flower","id":2,"name":"ROSA ROJA","ref":"F001","price":1.5,"stock":0,"color":"ROJA"}

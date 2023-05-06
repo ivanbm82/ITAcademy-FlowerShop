@@ -31,16 +31,4 @@ public class FlowerShopService {
         return repository.getAllFlowerShops();
     }
 
-    public FlowerShop getFlowerShopById(long id) {
-        return repository.getFlowerShopById(id);
-    }
-
-    void updateFlowerShop(FlowerShop flowerShop, String name) {
-        repository.updateFlowerShop(flowerShop, name);
-    }
-
-    public void removeFlowerShopById(long id) {
-        repository.removeFlowerShopById(id);
-    }
-
 }

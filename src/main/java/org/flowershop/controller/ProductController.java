@@ -9,7 +9,7 @@ import org.flowershop.repository.IProductRepository;
 import org.flowershop.service.ProductService;
 
 import org.flowershop.exceptions.NegativeValueException;
-import org.flowershop.utils.MenuProducts;
+import org.flowershop.utils.menu.MenuProducts;
 import org.flowershop.utils.Scan.Scan;
 
 import java.text.DecimalFormat;

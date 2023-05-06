@@ -1,4 +1,4 @@
-package org.flowershop.repository;
+package org.flowershop.repository.repositorySQL;
 
 
 import org.flowershop.domain.products.Decoration;
@@ -6,6 +6,7 @@ import org.flowershop.domain.products.Flower;
 import org.flowershop.domain.products.Product;
 import org.flowershop.domain.products.Tree;
 import org.flowershop.exceptions.NegativeValueException;
+import org.flowershop.repository.IProductRepository;
 import org.flowershop.utils.Scan.Scan;
 
 import java.io.IOException;

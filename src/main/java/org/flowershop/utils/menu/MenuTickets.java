@@ -1,4 +1,4 @@
-package org.flowershop.utils;
+package org.flowershop.utils.menu;
 
 import org.flowershop.utils.Scan.Scan;
 

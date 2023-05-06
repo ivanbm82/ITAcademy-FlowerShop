@@ -1,15 +1,15 @@
-package org.flowershop;
+package org.flowershop.utils;
 
 import org.flowershop.domain.products.Product;
 
 import java.time.LocalDate;
 import java.util.List;
 
-public class Ticket {
+public class UtilsQueryTicket {
     private LocalDate date;
     private List<Product> products;
 
-    public Ticket(LocalDate date, List<Product> products) {
+    public UtilsQueryTicket(LocalDate date, List<Product> products) {
         this.date = date;
         this.products = products;
     }
