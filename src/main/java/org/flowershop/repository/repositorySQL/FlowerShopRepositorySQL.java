@@ -28,6 +28,8 @@ public class FlowerShopRepositorySQL implements IFlowerShopRepository {
         uri = properties.getProperty("uri_sql");
         user = properties.getProperty("user");
         password = properties.getProperty("pass");
+
+        createTables();
     }
 
     @Override
@@ -72,33 +74,93 @@ public class FlowerShopRepositorySQL implements IFlowerShopRepository {
         return flowerShops;
     }
 
-    @Override
-    public FlowerShop getFlowerShopById(Long id) {
-        return null;
+
+    public void createTables() {
+        System.out.println("Create database if it doesn't exist.");
+        try (Connection conn = DriverManager.getConnection(this.uri, this.user, this.password);
+             Statement stmt = conn.createStatement()) {
+            // crea la base de datos railway si no existe
+            String createDatabaseSql = "CREATE SCHEMA IF NOT EXISTS `railway` DEFAULT CHARACTER SET utf8mb4;";
+            stmt.executeUpdate(createDatabaseSql);
+
+            // usa la base de datos railway
+            String useDatabaseSql = "USE `railway`;";
+            stmt.executeUpdate(useDatabaseSql);
+
+            // crea la tabla flowershop
+            String createFlowerShopSql = "CREATE TABLE `flowershop` ("
+                    + "`id` INT(11) NOT NULL AUTO_INCREMENT,"
+                    + "`name` VARCHAR(50) NOT NULL,"
+                    + "PRIMARY KEY (`id`)"
+                    + ");";
+            stmt.executeUpdate(createFlowerShopSql);
+
+            // crea la tabla products
+            String createProductsSql = "CREATE TABLE `products` ("
+                    + "`id` INT(11) NOT NULL AUTO_INCREMENT,"
+                    + "`name` VARCHAR(255) NOT NULL,"
+                    + "`price` DECIMAL(10,2) NOT NULL,"
+                    + "`stock` INT(11) NOT NULL,"
+                    + "`ref` varchar(20) NOT NULL,"
+                    + "PRIMARY KEY (`id`)"
+                    + ");";
+            stmt.executeUpdate(createProductsSql);
+
+            // crea la tabla trees
+            String createTreesSql = "CREATE TABLE `trees` ("
+                    + "`id` INT(11) NOT NULL,"
+                    + "`height` DECIMAL(5,2) NOT NULL,"
+                    + "PRIMARY KEY (`id`),"
+                    + "FOREIGN KEY (`id`) REFERENCES `products`(`id`) ON DELETE CASCADE"
+                    + ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;";
+            stmt.executeUpdate(createTreesSql);
+
+            // crea la tabla flowers
+            String createFlowersSql = "CREATE TABLE `flowers` ("
+                    + "`id` INT(11) NOT NULL,"
+                    + "`color` VARCHAR(50) NOT NULL,"
+                    + "PRIMARY KEY (`id`),"
+                    + "FOREIGN KEY (`id`) REFERENCES `products`(`id`) ON DELETE CASCADE"
+                    + ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;";
+            stmt.executeUpdate(createFlowersSql);
+
+            // crea la tabla decorations
+            String createDecorationsSql = "CREATE TABLE `decorations` ("
+                    + "`id` INT(11) NOT NULL,"
+                    + "`material` ENUM('plastico', 'madera') NOT NULL,"
+                    + "PRIMARY KEY (`id`),"
+                    + "FOREIGN KEY (`id`) REFERENCES `products`(`id`) ON DELETE CASCADE"
+                    + ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;";
+            stmt.executeUpdate(createDecorationsSql);
+
+            // create tickets table
+            String createTicketsSql = "CREATE TABLE `tickets` (\n" +
+                    "  `id` INT(11) NOT NULL AUTO_INCREMENT,\n" +
+                    "  `date` DATETIME NOT NULL,\n" +
+                    "  `client` long,\n" +
+                    "  `amount` DECIMAL(10,2) NOT NULL,\n" +
+                    "  `finished` boolean,\n" +
+                    "  PRIMARY KEY (`id`)\n" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;";
+            stmt.executeUpdate(createTicketsSql);
+
+            // create ticket_details table
+            String createTicketDetailsSql = "CREATE TABLE `ticket_details` (\n" +
+                    "  `id` INT(11) NOT NULL AUTO_INCREMENT,\n" +
+                    "  `ticket_id` INT(11) NOT NULL,\n" +
+                    "  `product_id` INT(11) NOT NULL,\n" +
+                    "  `ref`VARCHAR(20),\n" +
+                    "  `quantity` INT(11) NOT NULL,\n" +
+                    "  `price` DECIMAL(10,2),\n" +
+                    "  `amount` DECIMAL(10,2),\n" +
+                    "  PRIMARY KEY (`id`),\n" +
+                    "  FOREIGN KEY (`ticket_id`) REFERENCES `tickets`(`id`) ON DELETE CASCADE,\n" +
+                    "  FOREIGN KEY (`product_id`) REFERENCES `products`(`id`) ON DELETE CASCADE\n" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;";
+            stmt.executeUpdate(createTicketDetailsSql);
+        } catch (SQLException e) {
+            System.out.println("BD already exists.");
+        }
     }
 
-    @Override
-    public FlowerShop getFlowerShopByName(String name) {
-        return null;
-    }
-
-    @Override
-    public void updateFlowerShop(FlowerShop flowerShop, String name) {
-
-    }
-
-    @Override
-    public void removeFlowerShopById(long id) {
-
-    }
-
-    @Override
-    public void loadFlowerShops() {
-
-    }
-
-    @Override
-    public void saveFlowerShops() {
-
-    }
 }

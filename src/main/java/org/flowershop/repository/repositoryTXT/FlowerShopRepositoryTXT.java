@@ -85,7 +85,6 @@ public class FlowerShopRepositoryTXT implements IFlowerShopRepository {
      * @param id
      * @return    The flower shop with the specified id
      */
-    @Override
     public FlowerShop getFlowerShopById(Long id) {
         for (FlowerShop flowerShop: flowerShops) {
             if (flowerShop.getId() == id) {
@@ -101,7 +100,6 @@ public class FlowerShopRepositoryTXT implements IFlowerShopRepository {
      * @param name  The name of the flower shop.
      * @return      The flower shop with the specified name.
      */
-    @Override
     public FlowerShop getFlowerShopByName(String name) {
         for (FlowerShop flowerShop: flowerShops) {
             if (flowerShop.getName().equals(name)) {
@@ -117,7 +115,6 @@ public class FlowerShopRepositoryTXT implements IFlowerShopRepository {
      *
      * @param flowerShop  The flower shop with updated values.
      */
-    @Override
     public void updateFlowerShop(FlowerShop flowerShop, String name) {
         if (flowerShop == null) return;
 
@@ -130,7 +127,6 @@ public class FlowerShopRepositoryTXT implements IFlowerShopRepository {
      *
      * @param id
      */
-    @Override
     public void removeFlowerShopById(long id) {
         Iterator<FlowerShop> iterator = flowerShops.iterator();
         while (iterator.hasNext()) {
@@ -146,7 +142,6 @@ public class FlowerShopRepositoryTXT implements IFlowerShopRepository {
     /**
      * This method saves the list of flower shops to a file.
      */
-    @Override
     public void saveFlowerShops() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
             for (FlowerShop flowerShop : flowerShops) {
@@ -162,7 +157,6 @@ public class FlowerShopRepositoryTXT implements IFlowerShopRepository {
     /**
      * This method loads the flower shops file.
      */
-    @Override
     public void loadFlowerShops(){
         //if (!file.exists()) return;
 

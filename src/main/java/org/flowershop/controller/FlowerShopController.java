@@ -2,6 +2,7 @@ package org.flowershop.controller;
 
 import org.flowershop.domain.flowerShop.FlowerShop;
 import org.flowershop.domain.tickets.Ticket;
+import org.flowershop.repository.repositoryMongoDB.MongoDbRepository;
 import org.flowershop.repository.repositorySQL.FlowerShopRepositorySQL;
 import org.flowershop.repository.repositorySQL.ProductRepositorySQL;
 import org.flowershop.repository.repositorySQL.TicketRepositorySQL;
@@ -22,7 +23,6 @@ public class FlowerShopController {
 
 
     public FlowerShopController(int typePersistence) {
-
         // Select the type of persistence.
         switch (typePersistence) {
             case 1: // TXT
@@ -41,7 +41,11 @@ public class FlowerShopController {
                 break;
             case 3: // MONGODB
                 // TODO: MongoDB persistence
-                System.out.println("Not implemented yet");
+                System.out.println("FlowerShopController: MongoDB type: Not implemented yet");
+                //MongoDbRepository mongoDbRepository = new MongoDbRepository();
+                //flowerShopService = FlowerShopService.getInstance( mongoDbRepository );
+                //productController = ProductController.getInstance( mongoDbRepository );
+                //ticketController = TicketController.getInstance( mongoDbRepository, mongoDbRepository );
                 break;
             default:
                 System.out.println("No correct persistence option.");
