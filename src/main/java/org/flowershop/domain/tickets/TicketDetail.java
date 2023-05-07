@@ -1,5 +1,8 @@
 package org.flowershop.domain.tickets;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TicketDetail {
 
     private Long id;

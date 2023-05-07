@@ -42,10 +42,10 @@ public class FlowerShopController {
             case 3: // MONGODB
                 // TODO: MongoDB persistence
                 System.out.println("FlowerShopController: MongoDB type: Not implemented yet");
-                //MongoDbRepository mongoDbRepository = new MongoDbRepository();
-                //flowerShopService = FlowerShopService.getInstance( mongoDbRepository );
-                //productController = ProductController.getInstance( mongoDbRepository );
-                //ticketController = TicketController.getInstance( mongoDbRepository, mongoDbRepository );
+                MongoDbRepository mongoDbRepository = new MongoDbRepository();
+                flowerShopService = FlowerShopService.getInstance( mongoDbRepository );
+                productController = ProductController.getInstance( mongoDbRepository );
+                ticketController = TicketController.getInstance( mongoDbRepository, mongoDbRepository );
                 break;
             default:
                 System.out.println("No correct persistence option.");
