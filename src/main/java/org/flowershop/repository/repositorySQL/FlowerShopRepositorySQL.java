@@ -79,15 +79,15 @@ public class FlowerShopRepositorySQL implements IFlowerShopRepository {
         System.out.println("Create database if it doesn't exist.");
         try (Connection conn = DriverManager.getConnection(this.uri, this.user, this.password);
              Statement stmt = conn.createStatement()) {
-            // crea la base de datos railway si no existe
-            String createDatabaseSql = "CREATE SCHEMA IF NOT EXISTS `railway` DEFAULT CHARACTER SET utf8mb4;";
+            // Create the GD if not exists
+            String createDatabaseSql = "CREATE SCHEMA IF NOT EXISTS `flowershop` DEFAULT CHARACTER SET utf8mb4;";
             stmt.executeUpdate(createDatabaseSql);
 
-            // usa la base de datos railway
-            String useDatabaseSql = "USE `railway`;";
+            // Use this database
+            String useDatabaseSql = "USE `flowershop`;";
             stmt.executeUpdate(useDatabaseSql);
 
-            // crea la tabla flowershop
+            // create the flowershop table
             String createFlowerShopSql = "CREATE TABLE `flowershop` ("
                     + "`id` INT(11) NOT NULL AUTO_INCREMENT,"
                     + "`name` VARCHAR(50) NOT NULL,"
@@ -95,7 +95,7 @@ public class FlowerShopRepositorySQL implements IFlowerShopRepository {
                     + ");";
             stmt.executeUpdate(createFlowerShopSql);
 
-            // crea la tabla products
+            // create the products table
             String createProductsSql = "CREATE TABLE `products` ("
                     + "`id` INT(11) NOT NULL AUTO_INCREMENT,"
                     + "`name` VARCHAR(255) NOT NULL,"
@@ -106,7 +106,7 @@ public class FlowerShopRepositorySQL implements IFlowerShopRepository {
                     + ");";
             stmt.executeUpdate(createProductsSql);
 
-            // crea la tabla trees
+            // create trees table
             String createTreesSql = "CREATE TABLE `trees` ("
                     + "`id` INT(11) NOT NULL,"
                     + "`height` DECIMAL(5,2) NOT NULL,"
@@ -115,7 +115,7 @@ public class FlowerShopRepositorySQL implements IFlowerShopRepository {
                     + ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;";
             stmt.executeUpdate(createTreesSql);
 
-            // crea la tabla flowers
+            // create flowers table
             String createFlowersSql = "CREATE TABLE `flowers` ("
                     + "`id` INT(11) NOT NULL,"
                     + "`color` VARCHAR(50) NOT NULL,"
@@ -124,7 +124,7 @@ public class FlowerShopRepositorySQL implements IFlowerShopRepository {
                     + ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;";
             stmt.executeUpdate(createFlowersSql);
 
-            // crea la tabla decorations
+            // create decorations table
             String createDecorationsSql = "CREATE TABLE `decorations` ("
                     + "`id` INT(11) NOT NULL,"
                     + "`material` ENUM('plastico', 'madera') NOT NULL,"

@@ -40,12 +40,10 @@ public class FlowerShopController {
                         ticketRepositorySQL);
                 break;
             case 3: // MONGODB
-                // TODO: MongoDB persistence
-                System.out.println("FlowerShopController: MongoDB type: Not implemented yet");
-                //MongoDbRepository mongoDbRepository = new MongoDbRepository();
-                //flowerShopService = FlowerShopService.getInstance( mongoDbRepository );
-                //productController = ProductController.getInstance( mongoDbRepository );
-                //ticketController = TicketController.getInstance( mongoDbRepository, mongoDbRepository );
+                MongoDbRepository mongoDbRepository = new MongoDbRepository();
+                flowerShopService = FlowerShopService.getInstance( mongoDbRepository );
+                productController = ProductController.getInstance( mongoDbRepository );
+                ticketController = TicketController.getInstance( mongoDbRepository, mongoDbRepository );
                 break;
             default:
                 System.out.println("No correct persistence option.");
@@ -70,7 +68,7 @@ public class FlowerShopController {
                 case 4 -> financialHandleRequest();
                 default -> System.out.println("Choose an option:");
             }
-            System.out.println();
+            //System.out.println();
         } while(!exit);
     }
 
@@ -107,16 +105,25 @@ public class FlowerShopController {
         flowerShopService.addFlowerShop(flowerShop);
     }
 
+    /**
+     * This method prints the total flower shop value.
+     */
     public void getTotalStoreValue() {
         double totalValue = productController.getTotalStoreValue();
         System.out.println("Total flower shop value: " + totalValue);
     }
 
+    /**
+     * This method prints all historic tickets
+     */
     public void showAllTickets() {
         List<Ticket> tickets = ticketController.getAllTickets();
         ticketController.showObjectList(tickets);
     }
 
+    /**
+     * This method shows total profits of the flower shop
+     */
     public void showProfits() {
         List<Ticket> tickets = ticketController.getAllTickets();
         double profits = tickets.stream()

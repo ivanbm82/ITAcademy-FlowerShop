@@ -1,5 +1,9 @@
 package org.flowershop.domain.flowerShop;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class FlowerShop {
     private static long lastId = 0;
     private long id;

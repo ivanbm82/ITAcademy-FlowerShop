@@ -128,7 +128,7 @@ public class TicketController {
         if (ticketDetails.size() > 0) {
             String reference = askForString("Input product reference to remove");
 
-            //TODO Verify if product exits in ticket detail
+            // Verify if product exits in ticket detail
             Optional<TicketDetail> findTicketDetail = ticketDetails.stream().filter(p -> p.getRef().equalsIgnoreCase(reference)).findFirst();
 
             if (findTicketDetail.isPresent()) {
@@ -154,18 +154,18 @@ public class TicketController {
         String reference = askForString("Input product reference");
 
 
-        //TODO Verify if product exits
+        // Verify if product exits
         Optional<Product> findProduct = products.stream().filter(p -> p.getRef().equalsIgnoreCase(reference)).findFirst();
 
         if (findProduct.isPresent()) {
-            //TODO Verify if product exits in ticket detail
+            // Verify if product exits in ticket detail
             Optional<TicketDetail> findTicketDetail = ticketDetails.stream().filter(p -> p.getRef().equalsIgnoreCase(reference)).findFirst();
 
             if (findTicketDetail.isPresent()) {
                 System.out.println("Product already exists in the ticket");
             } else {
                 Integer quantity = askForInt("Input quantity");
-                //TODO Check if there are enough stock
+                // Check if there are enough stock
                 if (findProduct.get().getStock() >= quantity) {
                     TicketDetail newTicketDetail = new TicketDetail(findProduct.get().getId(), findProduct.get().getRef(),
                             quantity, findProduct.get().getPrice(), quantity * findProduct.get().getPrice());

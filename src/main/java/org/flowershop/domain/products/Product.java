@@ -1,10 +1,12 @@
 package org.flowershop.domain.products;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.flowershop.exceptions.NegativeValueException;
 
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "productType")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = Tree.class, name = "tree"),
