@@ -2,6 +2,8 @@ package org.flowershop.domain.tickets;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.text.DecimalFormat;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TicketDetail {
 
@@ -59,9 +61,10 @@ public class TicketDetail {
 
     @Override
     public String toString() {
+        DecimalFormat df = new DecimalFormat("#.##");
         return  "Ref= " + ref +
                 ", quantity= " + quantity +
                 ", price= " + price +
-                ", amount= " + amount;
+                ", amount= " + df.format(amount);
     }
 }

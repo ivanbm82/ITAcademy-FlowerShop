@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -91,11 +92,12 @@ public class Ticket implements Serializable {
 
     @Override
     public String toString() {
+        DecimalFormat df = new DecimalFormat("#.##");
         return "Ticket:" +
                 "ID= " + id +
                 ", date=" + date +
        //         ", client=" + client +
-                ", amount=" + amount + "\n" +
+                ", amount=" + df.format(amount) + "\n" +
         //        ", finished=" + finished +
                 ", products=" + ticketDetailList +
                 '}';

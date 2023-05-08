@@ -5,38 +5,48 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
-import com.mongodb.client.model.Updates;
 import org.bson.Document;
 
 import org.flowershop.domain.flowerShop.FlowerShop;
-import org.flowershop.domain.products.Decoration;
-import org.flowershop.domain.products.Flower;
 import org.flowershop.domain.products.Product;
-import org.flowershop.domain.products.Tree;
 import org.flowershop.domain.tickets.Ticket;
 import org.flowershop.repository.IFlowerShopRepository;
 import org.flowershop.repository.IProductRepository;
 import org.flowershop.repository.ITicketRepository;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 
-// TODO: MongoDb not implemented yet
 public class MongoDbRepository implements IFlowerShopRepository, IProductRepository, ITicketRepository {
+    // Config properties
+    private final Properties properties;
+    private Document document;
+    private ObjectMapper objectMapper;
+    // Connection to db
+    private String connection;
+    private String dbName;
     private final MongoClient mongoClient;
     private final MongoDatabase database;
+    // Collections
     private final MongoCollection<Document> collectionFlowerShop;
     private final MongoCollection<Document> collectionProducts;
     private final MongoCollection<Document> collectionTickets;
-    private Document document;
-    private ObjectMapper objectMapper;
+
 
     public MongoDbRepository() {
-        String connectionString = "mongodb+srv://florist:floristuser@cluster0.hg4yqnp.mongodb.net/?retryWrites=true&w=majority";
-        String dbName = "FlowerShop";
-        this.mongoClient = MongoClients.create(connectionString);
+        properties = new Properties();
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("config.properties")) {
+            properties.load(inputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        connection = properties.getProperty("uri_mongodb");
+        dbName = properties.getProperty("dbName");
+        this.mongoClient = MongoClients.create(connection);
         this.database = mongoClient.getDatabase(dbName);
         this.collectionFlowerShop = database.getCollection("flowershop");
         this.collectionProducts = database.getCollection("products");
@@ -108,9 +118,12 @@ public class MongoDbRepository implements IFlowerShopRepository, IProductReposit
     public Product getProductByRef(String ref) {
         Document query = new Document("ref", ref);
         Document document = collectionProducts.find(query).first();
-        Product product;
+
+        Product product = null;
         try {
-            product = objectMapper.readValue(document.toJson(), Product.class);
+            if (document != null) {
+                product = objectMapper.readValue(document.toJson(), Product.class);
+            }
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -201,9 +214,11 @@ public class MongoDbRepository implements IFlowerShopRepository, IProductReposit
     public Ticket getTicketById(Long id) {
         Document query = new Document("id", id);
         Document document = collectionTickets.find(query).first();
-        Ticket ticket;
+        Ticket ticket = null;
         try {
-            ticket = objectMapper.readValue(document.toJson(), Ticket.class);
+            if ( document != null) {
+                ticket = objectMapper.readValue(document.toJson(), Ticket.class);
+            }
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -217,9 +232,11 @@ public class MongoDbRepository implements IFlowerShopRepository, IProductReposit
         MongoCollection<Document> collection = database.getCollection("tickets");
 
         for (Document doc : collection.find()) {
-            Ticket ticket;
+            Ticket ticket = null;
             try {
-                ticket = objectMapper.readValue(doc.toJson(), Ticket.class);
+                if ( document != null) {
+                    ticket = objectMapper.readValue(document.toJson(), Ticket.class);
+                }
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
@@ -231,12 +248,16 @@ public class MongoDbRepository implements IFlowerShopRepository, IProductReposit
 
     @Override
     public Long getNewTicketId() {
+        Integer maxId ;
+        long longMaxId = 0L;
         FindIterable<Document> iterable = collectionTickets.find()
                 .sort(Sorts.descending("id"))
                 .limit(1);
         Document document = iterable.first();
-        Integer maxId = document.getInteger("id");
-        long longMaxId = maxId.longValue();
+        if ( document != null ) {
+            maxId = document.getInteger("id");
+            longMaxId = maxId.longValue();
+        }
         return Long.valueOf(longMaxId + 1L);
     }
 
@@ -244,9 +265,11 @@ public class MongoDbRepository implements IFlowerShopRepository, IProductReposit
     public Ticket removeTicketById(long id) throws IOException {
         Document query = new Document("id", id);
         Document document = collectionTickets.findOneAndDelete(query);
-        Ticket ticket;
+        Ticket ticket = null;
         try {
-            ticket = objectMapper.readValue(document.toJson(), Ticket.class);
+            if ( document != null) {
+                ticket = objectMapper.readValue(document.toJson(), Ticket.class);
+            }
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

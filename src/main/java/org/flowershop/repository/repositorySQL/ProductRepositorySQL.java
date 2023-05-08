@@ -39,10 +39,10 @@ public class ProductRepositorySQL implements IProductRepository {
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection(uri, user, password);
         } catch (ClassNotFoundException ex) {
-            System.out.println("Error al registrar el driver de MySQL: " + ex);
+            System.out.println("Error registering MySQL driver: " + ex);
             throw new RuntimeException(ex);
         } catch (SQLException ex) {
-            System.out.println("Error al conectar a la base de datos: " + ex);
+            System.out.println("Error to connect to database: " + ex);
             throw new RuntimeException(ex);
         }
     }
