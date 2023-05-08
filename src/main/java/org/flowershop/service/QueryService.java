@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+/*
+ * Not implemented
+ */
 public class QueryService {
     public int checkStock(List<Product> products) {
         return products.stream()

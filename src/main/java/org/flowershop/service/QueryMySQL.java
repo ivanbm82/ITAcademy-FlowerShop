@@ -1,6 +1,10 @@
 package org.flowershop.service;
 import java.sql.*;
 
+
+/*
+ * Not implemented
+ */
 public class QueryMySQL {
 
     public static int getTotalStock(Connection conn) throws SQLException {
