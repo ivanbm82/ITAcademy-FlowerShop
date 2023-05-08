@@ -3,7 +3,9 @@ package org.flowershop.repository.repositoryMongoDB;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.*;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
+import com.mongodb.client.model.Updates;
 import org.bson.Document;
 
 import org.flowershop.domain.flowerShop.FlowerShop;
@@ -32,7 +34,7 @@ public class MongoDbRepository implements IFlowerShopRepository, IProductReposit
     private ObjectMapper objectMapper;
 
     public MongoDbRepository() {
-        String connectionString = "mongodb+srv://<...>.mongodb.net/?retryWrites=true&w=majority";
+        String connectionString = "mongodb+srv://florist:floristuser@cluster0.hg4yqnp.mongodb.net/?retryWrites=true&w=majority";
         String dbName = "FlowerShop";
         this.mongoClient = MongoClients.create(connectionString);
         this.database = mongoClient.getDatabase(dbName);
@@ -77,7 +79,7 @@ public class MongoDbRepository implements IFlowerShopRepository, IProductReposit
     // Method to insert a new product document
     public void addProduct(Product product) {
         try {
-            // Convert the FlowerShop object to a JSON document
+            // Convert the product object to a JSON document
             String json = objectMapper.writeValueAsString(product);
             Document document = Document.parse(json);
 
@@ -136,19 +138,26 @@ public class MongoDbRepository implements IFlowerShopRepository, IProductReposit
 
     @Override
     public void updateProductById(long id, Product product) {
-
+        String json = null;
+        try {
+            json = objectMapper.writeValueAsString(product);
+            Document document = Document.parse(json);
+            collectionProducts.updateOne(Filters.eq("id", id), new Document("$set", document) );
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void updateProduct(Product product) {
-        if (product instanceof Tree tree) {
-            // TODO: update if tree
-        } else if (product instanceof Flower flower) {
-            // TODO: update if flower
-        } else if (product instanceof Decoration decoration) {
-            // TODO: update if decoration
+        String json = null;
+        try {
+            json = objectMapper.writeValueAsString(product);
+            Document document = Document.parse(json);
+            collectionProducts.updateOne(Filters.eq("ref", product.getRef()), new Document("$set", document) );
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
-
     }
 
     @Override
